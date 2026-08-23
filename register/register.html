@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สมัครสมาชิก — ClubTU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="register.css">
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="board">
+    <div class="board-content">
+      <div class="seal-big">TU</div>
+      <div class="board-note">
+        <span class="eyebrow">สมัครสมาชิก ClubTU</span>
+        <h2>สร้างบัญชี<br>เริ่มค้นหาชมรมของคุณ</h2>
+        <p>กรอกข้อมูลนักศึกษาเพียงครั้งเดียว ใช้สมัครเข้าชมรมได้ทุกที่ในระบบ ไม่ต้องกรอกซ้ำ</p>
+      </div>
+      <div class="checklist">
+        <div class="item">✓ <span><b>ติดตามชมรม</b> ที่สนใจไม่จำกัดจำนวน</span></div>
+        <div class="item">✓ <span><b>แจ้งเตือน</b> วันปิดรับสมัครอัตโนมัติ</span></div>
+        <div class="item">✓ <span><b>ประวัติการสมัคร</b> ดูสถานะได้ตลอดเวลา</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-side">
+    <div class="form-wrap">
+      <a href="/index.html" class="back">← กลับหน้าแรก</a>
+      <h1>สมัครสมาชิก</h1>
+      <p class="sub">กรอกข้อมูลด้านล่างเพื่อสร้างบัญชี ClubTU ของคุณ</p>
+
+      <div class="step-track">
+        <div class="dot filled"></div>
+        <div class="dot filled"></div>
+        <div class="dot"></div>
+      </div>
+
+      <form id="registerForm" novalidate>
+        <div class="field">
+          <label for="email">อีเมลนักศึกษา</label>
+          <input type="email" id="email" placeholder="6xxxxxxxxx@dome.tu.ac.th" required>
+        </div>
+
+        <div class="field">
+          <label for="password">รหัสผ่าน</label>
+          <input type="password" id="password" placeholder="อย่างน้อย 8 ตัวอักษร" minlength="8" required>
+          <div class="pw-strength" id="pwStrength"><span></span><span></span><span></span><span></span></div>
+          <div class="hint" id="pwHint">อย่างน้อย 8 ตัวอักษร</div>
+        </div>
+
+        <div class="field">
+          <label for="student_id">รหัสนักศึกษา</label>
+          <input type="text" id="student_id" placeholder="เช่น 6512345678" inputmode="numeric" required>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="faculty">คณะ</label>
+            <select id="faculty" required>
+              <option value="" disabled selected>เลือกคณะ</option>
+              <option>นิติศาสตร์</option>
+              <option>พาณิชยศาสตร์และการบัญชี</option>
+              <option>รัฐศาสตร์</option>
+              <option>เศรษฐศาสตร์</option>
+              <option>สังคมสงเคราะห์ศาสตร์</option>
+              <option>ศิลปศาสตร์</option>
+              <option>วารสารศาสตร์และสื่อสารมวลชน</option>
+              <option>วิทยาศาสตร์และเทคโนโลยี</option>
+              <option>วิศวกรรมศาสตร์</option>
+              <option>แพทยศาสตร์</option>
+              <option>สหเวชศาสตร์</option>
+              <option>สถาปัตยกรรมศาสตร์และการผังเมือง</option>
+              <option>อื่น ๆ</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="year">ชั้นปี</label>
+            <select id="year" required>
+              <option value="" disabled selected>เลือกชั้นปี</option>
+              <option>ปี 1</option>
+              <option>ปี 2</option>
+              <option>ปี 3</option>
+              <option>ปี 4</option>
+              <option>ปี 5 ขึ้นไป</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="terms-line">
+          <input type="checkbox" id="terms" required>
+          <span>ฉันยอมรับ <a href="#">ข้อกำหนดการใช้งาน</a> และ <a href="#">นโยบายความเป็นส่วนตัว</a> ของ ClubTU</span>
+        </label>
+
+        <div id="formError" class="form-error" hidden></div>
+
+        <button type="submit" class="btn-ticket">สร้างบัญชี</button>
+      </form>
+
+      <div class="login-line">
+        มีบัญชีอยู่แล้ว? <a href="#">เข้าสู่ระบบ</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
