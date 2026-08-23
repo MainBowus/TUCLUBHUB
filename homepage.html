@@ -3,113 +3,287 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>สมัครสมาชิก — ClubTU</title>
+<title>ClubTU — ค้นหาชมรมที่ใช่ในที่เดียว</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="homepage.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="screen">
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo"><span class="seal">TU</span>ClubTU</a>
+    <nav class="main-nav">
+      <a href="#categories">หมวดหมู่</a>
+      <a href="#deadlines">กำหนดการ</a>
+      <a href="#featured">ชมรมแนะนำ</a>
+      <a href="#how">วิธีใช้งาน</a>
+    </nav>
+    <div class="header-actions">
+      <div class="search-pill">🔍 ค้นหาชมรม...</div>
+      <a href="#" class="btn btn-ghost">เข้าสู่ระบบ</a>
+      <a href="#" class="btn btn-primary">สมัครสมาชิก</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="เปิดเมนู" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="#categories">หมวดหมู่</a>
+    <a href="#deadlines">กำหนดการ</a>
+    <a href="#featured">ชมรมแนะนำ</a>
+    <a href="#how">วิธีใช้งาน</a>
+    <a href="#" class="btn btn-ghost">เข้าสู่ระบบ</a>
+    <a href="#" class="btn btn-primary">สมัครสมาชิก</a>
+  </nav>
+</header>
 
-  <div class="board">
-    <div class="board-content">
-      <div class="seal-big">TU</div>
-      <div class="board-note">
-        <span class="eyebrow">สมัครสมาชิก ClubTU</span>
-        <h2>สร้างบัญชี<br>เริ่มค้นหาชมรมของคุณ</h2>
-        <p>กรอกข้อมูลนักศึกษาเพียงครั้งเดียว ใช้สมัครเข้าชมรมได้ทุกที่ในระบบ ไม่ต้องกรอกซ้ำ</p>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="note">
+      <span class="eyebrow-stamp">บอร์ดชมรม มธ.</span>
+      <h1>ค้นหาชมรมที่ใช่<br>ใน<span class="accent">ที่เดียว</span></h1>
+      <p class="lede">รวมชมรมและกิจกรรมนักศึกษาทุกคณะไว้ในบอร์ดเดียว ดูรายละเอียด สมัครเข้าชมรม และไม่พลาดทุกกำหนดการรับสมัคร</p>
+      <div class="hero-ctas">
+        <a href="#featured" class="btn btn-ticket">เริ่มค้นหาชมรม →</a>
+        <a href="#categories" class="btn btn-outline" style="border-color:var(--ink); color:var(--ink);">ดูตามหมวดหมู่</a>
       </div>
-      <div class="checklist">
-        <div class="item">✓ <span><b>ติดตามชมรม</b> ที่สนใจไม่จำกัดจำนวน</span></div>
-        <div class="item">✓ <span><b>แจ้งเตือน</b> วันปิดรับสมัครอัตโนมัติ</span></div>
-        <div class="item">✓ <span><b>ประวัติการสมัคร</b> ดูสถานะได้ตลอดเวลา</span></div>
+    </div>
+    <div class="flyer-stack">
+      <div class="flyer f1">
+        <span class="tag">ศิลปะการแสดง</span>
+        <div class="name">ชมรมนาฏศิลป์และการแสดง</div>
+        <div class="meta">เปิดรับ · 32 คนแล้ว</div>
+      </div>
+      <div class="flyer f2">
+        <span class="tag">เทคโนโลยี</span>
+        <div class="name">ชมรมคอมพิวเตอร์ TU Dev</div>
+        <div class="meta">ปิดรับใน 5 วัน</div>
+      </div>
+      <div class="flyer f3">
+        <span class="tag">อาสาพัฒนา</span>
+        <div class="name">ชมรมค่ายอาสา</div>
+        <div class="meta">เปิดรับตลอดปี</div>
+      </div>
+      <div class="flyer f4">
+        <span class="tag">ดนตรี</span>
+        <div class="name">วงดนตรีสากล มธ.</div>
+        <div class="meta">รับ 8 ตำแหน่ง</div>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="form-side">
-    <div class="form-wrap">
-      <a href="#" class="back">← กลับหน้าแรก</a>
-      <h1>สมัครสมาชิก</h1>
-      <p class="sub">กรอกข้อมูลด้านล่างเพื่อสร้างบัญชี ClubTU ของคุณ</p>
-
-      <div class="step-track">
-        <div class="dot filled"></div>
-        <div class="dot filled"></div>
-        <div class="dot"></div>
-      </div>
-
-      <form id="registerForm" novalidate>
-        <div class="field">
-          <label for="email">อีเมลนักศึกษา</label>
-          <input type="email" id="email" placeholder="6xxxxxxxxx@dome.tu.ac.th" required>
-        </div>
-
-        <div class="field">
-          <label for="password">รหัสผ่าน</label>
-          <input type="password" id="password" placeholder="อย่างน้อย 8 ตัวอักษร" minlength="8" required>
-          <div class="pw-strength" id="pwStrength"><span></span><span></span><span></span><span></span></div>
-          <div class="hint" id="pwHint">อย่างน้อย 8 ตัวอักษร</div>
-        </div>
-
-        <div class="field">
-          <label for="student_id">รหัสนักศึกษา</label>
-          <input type="text" id="student_id" placeholder="เช่น 6512345678" inputmode="numeric" required>
-        </div>
-
-        <div class="grid-2">
-          <div class="field">
-            <label for="faculty">คณะ</label>
-            <select id="faculty" required>
-              <option value="" disabled selected>เลือกคณะ</option>
-              <option>นิติศาสตร์</option>
-              <option>พาณิชยศาสตร์และการบัญชี</option>
-              <option>รัฐศาสตร์</option>
-              <option>เศรษฐศาสตร์</option>
-              <option>สังคมสงเคราะห์ศาสตร์</option>
-              <option>ศิลปศาสตร์</option>
-              <option>วารสารศาสตร์และสื่อสารมวลชน</option>
-              <option>วิทยาศาสตร์และเทคโนโลยี</option>
-              <option>วิศวกรรมศาสตร์</option>
-              <option>แพทยศาสตร์</option>
-              <option>สหเวชศาสตร์</option>
-              <option>สถาปัตยกรรมศาสตร์และการผังเมือง</option>
-              <option>อื่น ๆ</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="year">ชั้นปี</label>
-            <select id="year" required>
-              <option value="" disabled selected>เลือกชั้นปี</option>
-              <option>ปี 1</option>
-              <option>ปี 2</option>
-              <option>ปี 3</option>
-              <option>ปี 4</option>
-              <option>ปี 5 ขึ้นไป</option>
-            </select>
-          </div>
-        </div>
-
-        <label class="terms-line">
-          <input type="checkbox" id="terms" required>
-          <span>ฉันยอมรับ <a href="#">ข้อกำหนดการใช้งาน</a> และ <a href="#">นโยบายความเป็นส่วนตัว</a> ของ ClubTU</span>
-        </label>
-
-        <div id="formError" class="form-error" hidden></div>
-
-        <button type="submit" class="btn-ticket">สร้างบัญชี</button>
-      </form>
-
-      <div class="login-line">
-        มีบัญชีอยู่แล้ว? <a href="#">เข้าสู่ระบบ</a>
-      </div>
-    </div>
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat"><div class="num">120+</div><div class="lbl">ชมรมทั้งหมด</div></div>
+    <div class="stat"><div class="num">14</div><div class="lbl">หมวดหมู่ความสนใจ</div></div>
+    <div class="stat"><div class="num">8,400+</div><div class="lbl">นักศึกษาที่ใช้งาน</div></div>
+    <div class="stat"><div class="num">36</div><div class="lbl">กิจกรรมเปิดรับตอนนี้</div></div>
   </div>
-
 </div>
 
-<script src="homepage.js"></script>
+<section id="categories">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>เลือกตามความสนใจ</h2>
+        <div class="sub">แตะหมวดหมู่ที่ใช่ เพื่อดูชมรมทั้งหมดในกลุ่มนั้นทันที</div>
+      </div>
+      <a href="#" class="club-link">ดูหมวดหมู่ทั้งหมด →</a>
+    </div>
+    <div class="stamp-row">
+      <div class="stamp"><span class="ico">⚽</span>กีฬา</div>
+      <div class="stamp"><span class="ico">🎭</span>ศิลปะการแสดง</div>
+      <div class="stamp"><span class="ico">🎵</span>ดนตรี</div>
+      <div class="stamp"><span class="ico">💻</span>เทคโนโลยี</div>
+      <div class="stamp"><span class="ico">📚</span>วิชาการ</div>
+      <div class="stamp"><span class="ico">🌱</span>อาสาพัฒนา</div>
+      <div class="stamp"><span class="ico">🎨</span>ศิลปะ</div>
+      <div class="stamp"><span class="ico">🌍</span>นานาชาติ</div>
+      <div class="stamp"><span class="ico">📷</span>ถ่ายภาพ</div>
+      <div class="stamp"><span class="ico">🗣️</span>โต้วาที</div>
+    </div>
+  </div>
+</section>
+
+<section id="deadlines" style="background:var(--cream-dark);">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>ใกล้ปิดรับสมัคร</h2>
+        <div class="sub">อย่าพลาดช่วงเวลาสำคัญ — เรียงตามวันที่ใกล้ที่สุดก่อน</div>
+      </div>
+    </div>
+    <div class="deadline-row">
+      <div class="deadline-card">
+        <div class="date mono">24</div>
+        <div class="month mono">ส.ค. 2569</div>
+        <h3>รับสมัครสมาชิกใหม่</h3>
+        <div class="club">ชมรมคอมพิวเตอร์ TU Dev</div>
+        <span class="urgency high">เหลือ 2 วัน</span>
+      </div>
+      <div class="deadline-card">
+        <div class="date mono">28</div>
+        <div class="month mono">ส.ค. 2569</div>
+        <h3>คัดเลือกนักแสดง</h3>
+        <div class="club">ชมรมนาฏศิลป์และการแสดง</div>
+        <span class="urgency high">เหลือ 6 วัน</span>
+      </div>
+      <div class="deadline-card">
+        <div class="date mono">02</div>
+        <div class="month mono">ก.ย. 2569</div>
+        <h3>ค่ายอาสาครั้งที่ 14</h3>
+        <div class="club">ชมรมค่ายอาสา</div>
+        <span class="urgency mid">เหลือ 11 วัน</span>
+      </div>
+      <div class="deadline-card">
+        <div class="date mono">05</div>
+        <div class="month mono">ก.ย. 2569</div>
+        <h3>ออดิชันนักดนตรี</h3>
+        <div class="club">วงดนตรีสากล มธ.</div>
+        <span class="urgency mid">เหลือ 14 วัน</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="featured">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>ชมรมแนะนำสำหรับคุณ</h2>
+        <div class="sub">คัดจากชมรมที่มีคนสมัครเยอะและกิจกรรมต่อเนื่อง</div>
+      </div>
+      <a href="#" class="club-link">ดูชมรมทั้งหมด →</a>
+    </div>
+    <div class="club-grid">
+      <div class="club-card">
+        <div class="club-banner"><div class="club-emoji">💻</div></div>
+        <div class="club-body">
+          <div class="club-cat">เทคโนโลยี</div>
+          <h3>TU Dev Club</h3>
+          <p class="club-desc">รวมคนชอบเขียนโค้ด ทำโปรเจกต์จริง แข่งแฮกกาธอน และแลกเปลี่ยนความรู้สายเทคทุกสัปดาห์</p>
+          <div class="club-foot">
+            <span class="status-pill open">เปิดรับ</span>
+            <a href="#" class="club-link">ดูรายละเอียด</a>
+          </div>
+        </div>
+      </div>
+      <div class="club-card">
+        <div class="club-banner alt2"><div class="club-emoji">🌱</div></div>
+        <div class="club-body">
+          <div class="club-cat">อาสาพัฒนา</div>
+          <h3>ชมรมค่ายอาสา</h3>
+          <p class="club-desc">ออกค่ายสร้างห้องสมุดและซ่อมแซมโรงเรียนในต่างจังหวัด ปีละ 4 ครั้ง เปิดรับทุกชั้นปี</p>
+          <div class="club-foot">
+            <span class="status-pill soon">ใกล้ปิดรับ</span>
+            <a href="#" class="club-link">ดูรายละเอียด</a>
+          </div>
+        </div>
+      </div>
+      <div class="club-card">
+        <div class="club-banner alt3"><div class="club-emoji">🎭</div></div>
+        <div class="club-body">
+          <div class="club-cat">ศิลปะการแสดง</div>
+          <h3>นาฏศิลป์และการแสดง</h3>
+          <p class="club-desc">ฝึกซ้อมและแสดงในงานประเพณีของมหาวิทยาลัยทุกภาคการศึกษา ไม่มีพื้นฐานก็สมัครได้</p>
+          <div class="club-foot">
+            <span class="status-pill open">เปิดรับ</span>
+            <a href="#" class="club-link">ดูรายละเอียด</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="background:var(--cream-dark);">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>ใช้งานง่ายใน 3 ขั้นตอน</h2>
+        <div class="sub">จากค้นหาจนถึงเป็นสมาชิกชมรม ทำได้ในหน้าเดียว</div>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <h3>ค้นหาและกรองตามความสนใจ</h3>
+        <p>เลือกหมวดหมู่ คณะ หรือวันเปิดรับ เพื่อกรองชมรมที่ตรงกับสิ่งที่คุณสนใจจริง ๆ</p>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <h3>ดูรายละเอียดและติดตาม</h3>
+        <p>อ่านข้อมูลชมรม กิจกรรมที่ผ่านมา และกดติดตามเพื่อรับแจ้งเตือนกำหนดการสำคัญ</p>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <h3>สมัครและติดตามสถานะ</h3>
+        <p>ส่งใบสมัครออนไลน์ พร้อมติดตามผลและตารางกิจกรรมได้จากหน้าโปรไฟล์ของคุณ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>ยังไม่รู้จะเข้าชมรมไหนดี?</h2>
+  <p>ทำแบบทดสอบความสนใจ 2 นาที แล้วเราจะแนะนำชมรมที่เหมาะกับคุณที่สุด</p>
+  <div class="btns">
+    <a href="#" class="btn btn-on-crimson">ทำแบบทดสอบความสนใจ</a>
+    <a href="#" class="btn btn-outline-light">เรียกดูชมรมทั้งหมด</a>
+  </div>
+</div>
+
+<footer>
+  <svg class="dome" viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 140 L20 70 Q20 20 100 20 Q180 20 180 70 L180 140" stroke="#F4EBD6" stroke-width="3"/>
+    <line x1="20" y1="140" x2="180" y2="140" stroke="#F4EBD6" stroke-width="3"/>
+    <line x1="40" y1="140" x2="40" y2="75" stroke="#F4EBD6" stroke-width="2"/>
+    <line x1="70" y1="140" x2="70" y2="45" stroke="#F4EBD6" stroke-width="2"/>
+    <line x1="100" y1="140" x2="100" y2="20" stroke="#F4EBD6" stroke-width="2"/>
+    <line x1="130" y1="140" x2="130" y2="45" stroke="#F4EBD6" stroke-width="2"/>
+    <line x1="160" y1="140" x2="160" y2="75" stroke="#F4EBD6" stroke-width="2"/>
+  </svg>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">ClubTU</div>
+        <p style="font-size:13.5px; line-height:1.7; max-width:260px;">ศูนย์กลางชมรมและกิจกรรมนักศึกษามหาวิทยาลัยธรรมศาสตร์ ค้นหา ติดตาม และสมัครได้ในที่เดียว</p>
+      </div>
+      <div>
+        <h4>สำรวจ</h4>
+        <ul>
+          <li><a href="#categories">หมวดหมู่ชมรม</a></li>
+          <li><a href="#deadlines">กำหนดการรับสมัคร</a></li>
+          <li><a href="#featured">ชมรมแนะนำ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>สำหรับชมรม</h4>
+        <ul>
+          <li><a href="#">ลงทะเบียนชมรม</a></li>
+          <li><a href="#">จัดการสมาชิก</a></li>
+          <li><a href="#">คู่มือการใช้งาน</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>ติดต่อ</h4>
+        <ul>
+          <li><a href="#">ฝ่ายกิจการนักศึกษา มธ.</a></li>
+          <li><a href="#">Line Official: @clubtu</a></li>
+          <li><a href="#">clubtu@tu.ac.th</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2569 ClubTU · โครงการนักศึกษา มหาวิทยาลัยธรรมศาสตร์</span>
+      <span>ทำด้วยใจ เพื่อทุกชมรมใน มธ.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
