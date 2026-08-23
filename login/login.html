@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เข้าสู่ระบบ — ClubTU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="board">
+    <div class="board-content">
+      <div class="seal-big">TU</div>
+      <div class="board-note">
+        <span class="eyebrow">บอร์ดชมรม มธ.</span>
+        <h2>เข้าสู่ระบบเพื่อ<br>ไม่พลาดทุกกำหนดการ</h2>
+        <p>ติดตามชมรมที่สนใจ รับแจ้งเตือนวันปิดรับสมัคร และจัดการใบสมัครของคุณได้จากที่เดียว</p>
+      </div>
+    </div>
+    <div class="mini-flyer mf1">
+      <span class="t">อาสาพัฒนา</span>
+      <div class="n">ชมรมค่ายอาสา</div>
+    </div>
+    <div class="mini-flyer mf2">
+      <span class="t">เทคโนโลยี</span>
+      <div class="n">TU Dev Club</div>
+    </div>
+  </div>
+
+  <div class="form-side">
+    <div class="form-wrap">
+      <a href="/index.html" class="back">← กลับหน้าแรก</a>
+      <h1>เข้าสู่ระบบ</h1>
+      <p class="sub">ยินดีต้อนรับกลับ กรอกข้อมูลเพื่อเข้าใช้งาน ClubTU</p>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="email">อีเมลนักศึกษา (@dome.tu.ac.th)</label>
+          <input type="email" id="email" placeholder="6xxxxxxxxx@dome.tu.ac.th" required>
+        </div>
+        <div class="field">
+          <label for="password">รหัสผ่าน</label>
+          <div class="password-wrap">
+            <input type="password" id="password" placeholder="กรอกรหัสผ่านของคุณ" required>
+            <button type="button" class="toggle-pw" id="togglePw" aria-label="แสดงรหัสผ่าน">👁</button>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="checkbox-line">
+            <input type="checkbox" id="remember">
+            จดจำฉันไว้
+          </label>
+          <a href="#" class="forgot-link">ลืมรหัสผ่าน?</a>
+        </div>
+
+        <div id="formError" class="form-error" hidden></div>
+
+        <button type="submit" class="btn-ticket">เข้าสู่ระบบ</button>
+
+        <div class="divider">หรือเข้าสู่ระบบด้วย</div>
+
+        <button type="button" class="btn-sso">
+          <span class="badge">TU</span>
+          บัญชี TU Wi-Fi / Reg
+        </button>
+      </form>
+
+      <div class="signup-line">
+        ยังไม่มีบัญชี? <a href="/register/register.html">สมัครสมาชิกใหม่</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="login.js"></script>
+</body>
+</html>
