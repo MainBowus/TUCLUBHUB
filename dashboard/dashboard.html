@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>แดชบอร์ดของฉัน — ClubTU</title>
-<link rel="icon" type="image/png" href="/picture/tu-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -329,6 +328,25 @@
   .club-link{ font-size:12px; font-weight:700; color:var(--crimson); }
 
   /* ===== RECOMMENDED ===== */
+  .empty-state{
+    padding:36px 20px;
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:13.5px;
+    line-height:1.7;
+  }
+  .empty-state .emoji{ font-size:26px; display:block; margin-bottom:8px; }
+  .soon-note{
+    font-size:12.5px; color:#8a651f;
+    background:var(--gold-soft);
+    padding:10px 14px; border-radius:8px;
+  }
+  .toggle-btn{ border:none; cursor:pointer; font-family:inherit; }
+  .toggle-btn.on{ background:var(--green-soft); color:var(--green); }
+  .toggle-btn.off{ background:rgba(34,29,22,0.08); color:var(--ink-faint); }
+  .club-link.disabled{ color:var(--ink-faint); cursor:default; text-decoration:none; }
+  .club-link.disabled:hover{ text-decoration:none; }
+
   .rec-scroll{ display:flex; gap:14px; overflow-x:auto; padding-bottom:6px; }
   .rec-card{
     flex-shrink:0; width:212px;
@@ -425,12 +443,12 @@
 
     <div id="page-dashboard" class="page">
 
-      <div class="welcome-banner">
+      <div class="welcome-banner" id="welcomeBanner">
         <div>
-          <h1>คุณมี 3 กิจกรรมที่ต้องติดตามสัปดาห์นี้</h1>
-          <p>อย่าลืมเช็กกำหนดปิดรับสมัครของ TU Dev Club ก่อนวันที่ 24 ส.ค. นี้</p>
+          <h1 id="welcomeHeadline">กำลังโหลดข้อมูล...</h1>
+          <p id="welcomeSub">รอสักครู่นะครับ</p>
         </div>
-        <a href="#" class="welcome-cta">ดูกำหนดการทั้งหมด →</a>
+        <button class="welcome-cta" id="welcomeCta" data-page="calendar">ดูกำหนดการทั้งหมด →</button>
       </div>
 
       <div class="stat-row">
@@ -438,25 +456,25 @@
           <div class="stat-icon c1">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h9a2 2 0 0 1 2 2v14l-6.5-3.5L4 20V6a2 2 0 0 1 2-2Z"/></svg>
           </div>
-          <div><div class="num">5</div><div class="lbl">ชมรมที่ติดตาม</div></div>
+          <div><div class="num" id="statFollowing">-</div><div class="lbl">ชมรมที่ติดตาม</div></div>
         </div>
         <div class="stat-card">
           <div class="stat-icon c2">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/></svg>
           </div>
-          <div><div class="num">2</div><div class="lbl">ใบสมัครรอผล</div></div>
+          <div><div class="num" id="statPending">-</div><div class="lbl">ใบสมัครรอผล</div></div>
         </div>
         <div class="stat-card">
           <div class="stat-icon c3">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
           </div>
-          <div><div class="num">3</div><div class="lbl">กิจกรรมใกล้ถึง</div></div>
+          <div><div class="num" id="statUpcoming">-</div><div class="lbl">กิจกรรมใกล้ถึง</div></div>
         </div>
         <div class="stat-card">
           <div class="stat-icon c4">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
           </div>
-          <div><div class="num">1</div><div class="lbl">เป็นสมาชิกแล้ว</div></div>
+          <div><div class="num" id="statApproved">-</div><div class="lbl">เป็นสมาชิกแล้ว</div></div>
         </div>
       </div>
 
@@ -465,53 +483,28 @@
           <div>
             <div class="block-head">
               <h2>กำหนดการของฉัน</h2>
-              <a href="#" class="link">ดูปฏิทินทั้งหมด →</a>
+              <button class="link" data-page="calendar" style="background:none; border:none; cursor:pointer;">ดูปฏิทินทั้งหมด →</button>
             </div>
-            <div class="panel">
-              <div class="deadline-row">
-                <div class="datebox"><div class="d mono">24</div><div class="m mono">ส.ค.</div></div>
-                <div class="info">
-                  <h3>รับสมัครสมาชิกใหม่ปิดรับ</h3>
-                  <div class="club">TU Dev Club · คุณกดติดตามไว้</div>
-                </div>
-                <span class="urgency high">เหลือ 2 วัน</span>
-              </div>
-              <div class="deadline-row">
-                <div class="datebox"><div class="d mono">28</div><div class="m mono">ส.ค.</div></div>
-                <div class="info">
-                  <h3>ประกาศผลคัดเลือกนักแสดง</h3>
-                  <div class="club">ชมรมนาฏศิลป์และการแสดง · คุณสมัครไว้แล้ว</div>
-                </div>
-                <span class="urgency high">เหลือ 6 วัน</span>
-              </div>
-              <div class="deadline-row">
-                <div class="datebox"><div class="d mono">05</div><div class="m mono">ก.ย.</div></div>
-                <div class="info">
-                  <h3>ออดิชันนักดนตรี</h3>
-                  <div class="club">วงดนตรีสากล มธ. · คุณกดติดตามไว้</div>
-                </div>
-                <span class="urgency mid">เหลือ 14 วัน</span>
-              </div>
+            <div class="panel" id="deadlineListHome">
+              <div class="empty-state">กำลังโหลด...</div>
             </div>
           </div>
 
           <div class="progress-card">
             <h3>สถานะใบสมัครของฉัน</h3>
             <div class="ring-wrap">
-              <svg width="88" height="88" viewBox="0 0 88 88">
+              <svg width="88" height="88" viewBox="0 0 88 88" id="progressRing">
                 <circle cx="44" cy="44" r="36" fill="none" stroke="#EFE7D2" stroke-width="10"/>
-                <circle cx="44" cy="44" r="36" fill="none" stroke="#3E8A56" stroke-width="10" stroke-dasharray="226" stroke-dashoffset="170" stroke-linecap="round" transform="rotate(-90 44 44)"/>
-                <circle cx="44" cy="44" r="36" fill="none" stroke="#C0912E" stroke-width="10" stroke-dasharray="226" stroke-dashoffset="197" stroke-linecap="round" transform="rotate(45 44 44)"/>
               </svg>
               <div class="ring-label">
-                <b>5</b>
+                <b id="ringTotal">0</b>
                 ใบสมัครทั้งหมด
               </div>
             </div>
-            <div class="legend">
-              <div class="legend-item"><span class="legend-dot" style="background:#3E8A56"></span> อนุมัติแล้ว — 2 ชมรม</div>
-              <div class="legend-item"><span class="legend-dot" style="background:#C0912E"></span> รอผล — 2 ชมรม</div>
-              <div class="legend-item"><span class="legend-dot" style="background:#EFE7D2"></span> ยังไม่ส่ง — 1 ชมรม</div>
+            <div class="legend" id="ringLegend">
+              <div class="legend-item"><span class="legend-dot" style="background:#3E8A56"></span> อนุมัติแล้ว — <span id="legendApproved">0</span> ชมรม</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#C0912E"></span> รอผล — <span id="legendPending">0</span> ชมรม</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#EFE7D2"></span> ยังไม่สมัคร — <span id="legendNone">0</span> ชมรม</div>
             </div>
           </div>
         </div>
@@ -520,72 +513,20 @@
       <section class="block">
         <div class="block-head">
           <h2>ชมรมที่ติดตาม</h2>
-          <a href="#" class="link">ดูทั้งหมด (5) →</a>
+          <button class="link" data-page="myclubs" style="background:none; border:none; cursor:pointer;" id="followedCountLink">ดูทั้งหมด →</button>
         </div>
-        <div class="club-grid">
-          <div class="club-card">
-            <div class="club-banner"><div class="club-emoji">💻</div></div>
-            <div class="club-body">
-              <h3>TU Dev Club</h3>
-              <div class="club-foot">
-                <span class="status-pill pending">รอผลสมัคร</span>
-                <a href="#" class="club-link">ดูรายละเอียด</a>
-              </div>
-            </div>
-          </div>
-          <div class="club-card">
-            <div class="club-banner alt3"><div class="club-emoji">🎭</div></div>
-            <div class="club-body">
-              <h3>นาฏศิลป์และการแสดง</h3>
-              <div class="club-foot">
-                <span class="status-pill approved">เป็นสมาชิกแล้ว</span>
-                <a href="#" class="club-link">ดูรายละเอียด</a>
-              </div>
-            </div>
-          </div>
-          <div class="club-card">
-            <div class="club-banner alt2"><div class="club-emoji">🌱</div></div>
-            <div class="club-body">
-              <h3>ชมรมค่ายอาสา</h3>
-              <div class="club-foot">
-                <span class="status-pill open">กำลังติดตาม</span>
-                <a href="#" class="club-link">ดูรายละเอียด</a>
-              </div>
-            </div>
-          </div>
+        <div class="club-grid" id="followedClubsHome">
+          <div class="empty-state">กำลังโหลด...</div>
         </div>
       </section>
 
       <section class="block">
         <div class="block-head">
           <h2>แนะนำสำหรับคุณ</h2>
-          <div class="link" style="color:var(--ink-soft); font-weight:600;">ตามคณะรัฐศาสตร์และความสนใจของคุณ</div>
+          <div class="link" style="color:var(--ink-soft); font-weight:600;" id="recommendReason">ตามคณะและความสนใจของคุณ</div>
         </div>
-        <div class="rec-scroll">
-          <div class="rec-card">
-            <span class="tag">โต้วาที</span>
-            <h3>ชมรมโต้วาทีภาษาไทย</h3>
-            <div class="desc">ฝึกพูด คิดวิเคราะห์ แข่งขันระดับประเทศทุกปี</div>
-            <button class="btn-follow">+ ติดตาม</button>
-          </div>
-          <div class="rec-card">
-            <span class="tag">วิชาการ</span>
-            <h3>ชมรมรัฐศาสตร์สัมพันธ์</h3>
-            <div class="desc">จัดเสวนาและกิจกรรมวิชาการร่วมกับคณะทุกเดือน</div>
-            <button class="btn-follow">+ ติดตาม</button>
-          </div>
-          <div class="rec-card">
-            <span class="tag">นานาชาติ</span>
-            <h3>ชมรมนักศึกษาแลกเปลี่ยน</h3>
-            <div class="desc">เชื่อมนักศึกษาไทย-ต่างชาติ จัดทริปและภาษาแลกเปลี่ยน</div>
-            <button class="btn-follow">+ ติดตาม</button>
-          </div>
-          <div class="rec-card">
-            <span class="tag">อาสาพัฒนา</span>
-            <h3>ชมรมค่ายพัฒนาชนบท</h3>
-            <div class="desc">ออกค่ายพัฒนาโรงเรียนในต่างจังหวัดภาคเรียนละครั้ง</div>
-            <button class="btn-follow">+ ติดตาม</button>
-          </div>
+        <div class="rec-scroll" id="recommendedClubs">
+          <div class="empty-state">กำลังโหลด...</div>
         </div>
       </section>
 
@@ -597,63 +538,44 @@
       <div class="panel" style="padding:16px 18px; margin-bottom:22px;">
         <div class="search-pill" style="min-width:0; width:100%; box-shadow:none; border-color:var(--line);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          พิมพ์ชื่อชมรม หมวดหมู่ หรือคณะ...
+          <input id="searchInput" type="text" placeholder="พิมพ์ชื่อชมรม หรือหมวดหมู่..." style="border:none; background:none; outline:none; font-family:inherit; font-size:13.5px; width:100%; color:var(--ink);">
         </div>
       </div>
-      <div class="sticker-row" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px;">
-        <span class="status-pill open" style="padding:7px 14px; font-size:12.5px;">⚽ กีฬา</span>
-        <span class="status-pill pending" style="padding:7px 14px; font-size:12.5px;">🎭 ศิลปะการแสดง</span>
-        <span class="status-pill approved" style="padding:7px 14px; font-size:12.5px;">💻 เทคโนโลยี</span>
-        <span class="status-pill open" style="padding:7px 14px; font-size:12.5px;">🌱 อาสาพัฒนา</span>
-        <span class="status-pill pending" style="padding:7px 14px; font-size:12.5px;">🎵 ดนตรี</span>
-      </div>
-      <div class="club-grid">
-        <div class="club-card"><div class="club-banner"><div class="club-emoji">💻</div></div><div class="club-body"><h3>TU Dev Club</h3><div class="club-foot"><span class="status-pill open">เปิดรับ</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
-        <div class="club-card"><div class="club-banner alt2"><div class="club-emoji">🌱</div></div><div class="club-body"><h3>ชมรมค่ายอาสา</h3><div class="club-foot"><span class="status-pill open">เปิดรับ</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
-        <div class="club-card"><div class="club-banner alt3"><div class="club-emoji">🎭</div></div><div class="club-body"><h3>นาฏศิลป์และการแสดง</h3><div class="club-foot"><span class="status-pill open">เปิดรับ</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
-        <div class="club-card"><div class="club-banner"><div class="club-emoji">🗣️</div></div><div class="club-body"><h3>ชมรมโต้วาทีภาษาไทย</h3><div class="club-foot"><span class="status-pill open">เปิดรับ</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
-        <div class="club-card"><div class="club-banner alt2"><div class="club-emoji">🎵</div></div><div class="club-body"><h3>วงดนตรีสากล มธ.</h3><div class="club-foot"><span class="status-pill pending">ใกล้ปิดรับ</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
-        <div class="club-card"><div class="club-banner alt3"><div class="club-emoji">🌍</div></div><div class="club-body"><h3>ชมรมนักศึกษาแลกเปลี่ยน</h3><div class="club-foot"><span class="status-pill open">เปิดรับ</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
+      <div class="club-grid" id="searchResults">
+        <div class="empty-state">กำลังโหลด...</div>
       </div>
     </div>
 
     <div id="page-myclubs" class="page" style="display:none;">
       <div class="block-head"><h2>ชมรมของฉัน</h2></div>
       <div class="block-head" style="margin-top:0;">
-        <div class="link" style="color:var(--ink); font-weight:700;">กำลังติดตาม (3)</div>
+        <div class="link" style="color:var(--ink); font-weight:700;" id="followingCountLabel">กำลังติดตาม</div>
       </div>
-      <div class="club-grid" style="margin-bottom:36px;">
-        <div class="club-card"><div class="club-banner"><div class="club-emoji">💻</div></div><div class="club-body"><h3>TU Dev Club</h3><div class="club-foot"><span class="status-pill pending">รอผลสมัคร</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
-        <div class="club-card"><div class="club-banner alt3"><div class="club-emoji">🎭</div></div><div class="club-body"><h3>นาฏศิลป์และการแสดง</h3><div class="club-foot"><span class="status-pill approved">เป็นสมาชิกแล้ว</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
-        <div class="club-card"><div class="club-banner alt2"><div class="club-emoji">🌱</div></div><div class="club-body"><h3>ชมรมค่ายอาสา</h3><div class="club-foot"><span class="status-pill open">กำลังติดตาม</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
+      <div class="club-grid" id="followingClubsFull" style="margin-bottom:36px;">
+        <div class="empty-state">กำลังโหลด...</div>
       </div>
       <div class="block-head">
-        <div class="link" style="color:var(--ink); font-weight:700;">เป็นสมาชิกแล้ว (1)</div>
+        <div class="link" style="color:var(--ink); font-weight:700;" id="memberCountLabel">เป็นสมาชิกแล้ว</div>
       </div>
-      <div class="club-grid">
-        <div class="club-card"><div class="club-banner alt3"><div class="club-emoji">🎭</div></div><div class="club-body"><h3>นาฏศิลป์และการแสดง</h3><div class="club-foot"><span class="status-pill approved">สมาชิกตั้งแต่ ก.พ. 69</span><a href="#" class="club-link">ดูรายละเอียด</a></div></div></div>
+      <div class="club-grid" id="memberClubsFull">
+        <div class="empty-state">กำลังโหลด...</div>
       </div>
     </div>
 
     <div id="page-calendar" class="page" style="display:none;">
       <div class="block-head"><h2>ปฏิทินกิจกรรมของฉัน</h2></div>
-      <div class="panel">
-        <div class="deadline-row"><div class="datebox"><div class="d mono">24</div><div class="m mono">ส.ค.</div></div><div class="info"><h3>รับสมัครสมาชิกใหม่ปิดรับ</h3><div class="club">TU Dev Club</div></div><span class="urgency high">เหลือ 2 วัน</span></div>
-        <div class="deadline-row"><div class="datebox"><div class="d mono">28</div><div class="m mono">ส.ค.</div></div><div class="info"><h3>ประกาศผลคัดเลือกนักแสดง</h3><div class="club">ชมรมนาฏศิลป์และการแสดง</div></div><span class="urgency high">เหลือ 6 วัน</span></div>
-        <div class="deadline-row"><div class="datebox"><div class="d mono">02</div><div class="m mono">ก.ย.</div></div><div class="info"><h3>ค่ายอาสาครั้งที่ 14</h3><div class="club">ชมรมค่ายอาสา</div></div><span class="urgency mid">เหลือ 11 วัน</span></div>
-        <div class="deadline-row"><div class="datebox"><div class="d mono">05</div><div class="m mono">ก.ย.</div></div><div class="info"><h3>ออดิชันนักดนตรี</h3><div class="club">วงดนตรีสากล มธ.</div></div><span class="urgency mid">เหลือ 14 วัน</span></div>
-        <div class="deadline-row"><div class="datebox"><div class="d mono">18</div><div class="m mono">ก.ย.</div></div><div class="info"><h3>ประชุมสมาชิกประจำเดือน</h3><div class="club">นาฏศิลป์และการแสดง</div></div><span class="urgency mid">เหลือ 27 วัน</span></div>
+      <div class="panel" id="deadlineListFull">
+        <div class="empty-state">กำลังโหลด...</div>
       </div>
     </div>
 
     <div id="page-applications" class="page" style="display:none;">
       <div class="block-head"><h2>ใบสมัครของฉัน</h2></div>
-      <div class="panel">
-        <div class="deadline-row"><div class="datebox" style="background:var(--gold-soft); color:#8a651f;"><div class="d mono" style="font-size:12px;">รอผล</div></div><div class="info"><h3>TU Dev Club</h3><div class="club">ส่งใบสมัครเมื่อ 18 ส.ค. 2569</div></div><span class="urgency mid">รอผล</span></div>
-        <div class="deadline-row"><div class="datebox" style="background:var(--green-soft); color:var(--green);"><div class="d mono" style="font-size:12px;">ผ่าน</div></div><div class="info"><h3>ชมรมนาฏศิลป์และการแสดง</h3><div class="club">อนุมัติเมื่อ 2 ก.พ. 2569</div></div><span class="urgency" style="background:var(--green-soft); color:var(--green);">อนุมัติแล้ว</span></div>
-        <div class="deadline-row"><div class="datebox" style="background:var(--gold-soft); color:#8a651f;"><div class="d mono" style="font-size:12px;">รอผล</div></div><div class="info"><h3>ชมรมค่ายอาสา</h3><div class="club">ส่งใบสมัครเมื่อ 20 ส.ค. 2569</div></div><span class="urgency mid">รอผล</span></div>
+      <div class="panel" id="applicationsList">
+        <div class="empty-state">กำลังโหลด...</div>
       </div>
     </div>
+
 
     <div id="page-profile" class="page" style="display:none;">
       <div class="block-head"><h2>โปรไฟล์ของฉัน</h2></div>
@@ -677,10 +599,13 @@
 
     <div id="page-settings" class="page" style="display:none;">
       <div class="block-head"><h2>ตั้งค่า</h2></div>
-      <div class="panel" style="padding:6px;">
-        <div class="deadline-row"><div class="info"><h3>แจ้งเตือนกำหนดปิดรับสมัคร</h3><div class="club">รับอีเมลก่อนวันปิดรับ 3 วัน</div></div><span class="status-pill approved">เปิดอยู่</span></div>
-        <div class="deadline-row"><div class="info"><h3>แจ้งเตือนชมรมใหม่</h3><div class="club">ตามหมวดหมู่ที่สนใจ</div></div><span class="status-pill approved">เปิดอยู่</span></div>
-        <div class="deadline-row"><div class="info"><h3>แสดงโปรไฟล์ต่อสาธารณะ</h3><div class="club">ให้ชมรมอื่นเห็นว่าคุณติดตามอยู่</div></div><span class="status-pill pending">ปิดอยู่</span></div>
+      <div class="panel" style="padding:16px 18px; margin-bottom:14px;">
+        <div class="soon-note">📬 การส่งอีเมลแจ้งเตือนจริงยังอยู่ระหว่างพัฒนา (เร็วๆ นี้) — ตอนนี้ปุ่มด้านล่างแค่บันทึกค่าที่คุณตั้งไว้ในระบบก่อน</div>
+      </div>
+      <div class="panel">
+        <div class="deadline-row"><div class="info"><h3>แจ้งเตือนกำหนดปิดรับสมัคร</h3><div class="club">รับอีเมลก่อนวันปิดรับ 3 วัน</div></div><button class="status-pill toggle-btn" id="toggleDeadline" data-field="deadlineAlerts">-</button></div>
+        <div class="deadline-row"><div class="info"><h3>แจ้งเตือนชมรมใหม่</h3><div class="club">ตามหมวดหมู่ที่สนใจ</div></div><button class="status-pill toggle-btn" id="toggleNewClub" data-field="newClubAlerts">-</button></div>
+        <div class="deadline-row"><div class="info"><h3>แสดงโปรไฟล์ต่อสาธารณะ</h3><div class="club">ให้ชมรมอื่นเห็นว่าคุณติดตามอยู่</div></div><button class="status-pill toggle-btn" id="togglePublicProfile" data-field="publicProfile">-</button></div>
       </div>
     </div>
 
@@ -707,7 +632,14 @@
   import {
     getFirestore,
     doc,
-    getDoc
+    getDoc,
+    setDoc,
+    deleteDoc,
+    collection,
+    query,
+    where,
+    getDocs,
+    serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -739,8 +671,16 @@
     'สถาปัตยกรรมศาสตร์และการผังเมือง': 'สถาปัตยกรรมศาสตร์ฯ'
   };
 
-  let greetingName = 'สวัสดี';
+  const bannerVariants = ['', 'alt2', 'alt3'];
 
+  // ===== App state (populated after auth + Firestore fetch) =====
+  let currentUid = null;
+  let greetingName = 'สวัสดี';
+  let clubsById = {};       // { clubId: clubData }
+  let followsList = [];     // [{ clubId, followedAt }]
+  let applicationsList = []; // [{ clubId, status, appliedAt }]
+
+  // ===== Small helpers =====
   function initials(email) {
     if (!email) return '?';
     return email.slice(0, 2).toUpperCase();
@@ -749,63 +689,405 @@
   function formatThaiDate(isoString) {
     if (!isoString) return '-';
     const d = new Date(isoString);
+    if (isNaN(d)) return '-';
     const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
     return `${months[d.getMonth()]} ${d.getFullYear() + 543}`;
   }
 
-  // ===== Auth guard: no user logged in → send back to login =====
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = 'login.html';
+  function daysUntil(isoDate) {
+    if (!isoDate) return null;
+    const target = new Date(isoDate);
+    if (isNaN(target)) return null;
+    const now = new Date();
+    const diffMs = target.setHours(23,59,59,999) - now.getTime();
+    return Math.ceil(diffMs / 86400000);
+  }
+
+  function urgencyLabel(days) {
+    if (days === null) return { text: '-', cls: 'mid' };
+    if (days < 0) return { text: 'ปิดรับแล้ว', cls: 'high' };
+    if (days === 0) return { text: 'วันนี้', cls: 'high' };
+    if (days <= 7) return { text: `เหลือ ${days} วัน`, cls: 'high' };
+    return { text: `เหลือ ${days} วัน`, cls: 'mid' };
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  function emptyState(message, emoji) {
+    return `<div class="empty-state"><span class="emoji">${emoji || '🗂️'}</span>${escapeHtml(message)}</div>`;
+  }
+
+  // ===== Firestore data access =====
+  async function loadClubs() {
+    const snap = await getDocs(collection(db, 'clubs'));
+    const map = {};
+    snap.forEach(d => { map[d.id] = { id: d.id, ...d.data() }; });
+    return map;
+  }
+
+  async function loadFollows(uid) {
+    const q = query(collection(db, 'follows'), where('uid', '==', uid));
+    const snap = await getDocs(q);
+    const out = [];
+    snap.forEach(d => out.push({ id: d.id, ...d.data() }));
+    return out;
+  }
+
+  async function loadApplications(uid) {
+    const q = query(collection(db, 'applications'), where('uid', '==', uid));
+    const snap = await getDocs(q);
+    const out = [];
+    snap.forEach(d => out.push({ id: d.id, ...d.data() }));
+    return out;
+  }
+
+  async function toggleFollow(clubId, uid) {
+    const followId = `${uid}_${clubId}`;
+    const existing = followsList.find(f => f.clubId === clubId);
+    if (existing) {
+      await deleteDoc(doc(db, 'follows', followId));
+      followsList = followsList.filter(f => f.clubId !== clubId);
+    } else {
+      await setDoc(doc(db, 'follows', followId), {
+        uid, clubId, followedAt: new Date().toISOString()
+      });
+      followsList.push({ id: followId, uid, clubId, followedAt: new Date().toISOString() });
+    }
+    renderEverything();
+  }
+
+  async function applyToClub(clubId, uid) {
+    const appId = `${uid}_${clubId}`;
+    if (applicationsList.find(a => a.clubId === clubId)) return; // already applied
+    await setDoc(doc(db, 'applications', appId), {
+      uid, clubId, status: 'pending', appliedAt: new Date().toISOString()
+    });
+    applicationsList.push({ id: appId, uid, clubId, status: 'pending', appliedAt: new Date().toISOString() });
+    renderEverything();
+  }
+
+  // ===== Card renderers =====
+  function statusForClub(clubId) {
+    const app = applicationsList.find(a => a.clubId === clubId);
+    if (app) {
+      if (app.status === 'approved') return { label: 'เป็นสมาชิกแล้ว', cls: 'approved' };
+      if (app.status === 'rejected') return { label: 'ไม่ผ่านการคัดเลือก', cls: 'pending' };
+      return { label: 'รอผลสมัคร', cls: 'pending' };
+    }
+    if (followsList.find(f => f.clubId === clubId)) return { label: 'กำลังติดตาม', cls: 'open' };
+    return null;
+  }
+
+  function clubCardHtml(club, opts = {}) {
+    const variant = bannerVariants[club.categoryIndex % 3 || 0] || '';
+    const status = opts.forceStatus || statusForClub(club.id);
+    const isFollowing = !!followsList.find(f => f.clubId === club.id);
+
+    const viewLink = `<a href="#" class="club-link disabled js-view-btn" data-club-id="${club.id}">ดูรายละเอียด</a>`;
+    const followBtn = `<button class="btn-follow js-follow-btn" data-club-id="${club.id}" style="width:auto; padding:6px 14px;">${isFollowing ? 'เลิกติดตาม' : '+ ติดตาม'}</button>`;
+    const statusPill = status ? `<span class="status-pill ${status.cls}">${escapeHtml(status.label)}</span>` : '';
+
+    // left slot: status pill if we have one, otherwise the follow button (when offered)
+    const leftSlot = statusPill || (opts.showFollowToggle ? followBtn : '<span></span>');
+    // right slot: follow button when we already showed a status pill on the left, otherwise the view link
+    const rightSlot = (statusPill && opts.showFollowToggle) ? followBtn : viewLink;
+
+    return `
+      <div class="club-card">
+        <div class="club-banner ${variant}"><div class="club-emoji">${escapeHtml(club.emoji || '🏷️')}</div></div>
+        <div class="club-body">
+          <h3>${escapeHtml(club.name || 'ไม่มีชื่อ')}</h3>
+          <div class="club-foot">
+            ${leftSlot}
+            ${rightSlot}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function recCardHtml(club) {
+    const hasApplied = !!applicationsList.find(a => a.clubId === club.id);
+    const isFollowing = !!followsList.find(f => f.clubId === club.id);
+    return `
+      <div class="rec-card">
+        <span class="tag">${escapeHtml(club.category || 'ทั่วไป')}</span>
+        <h3>${escapeHtml(club.name || 'ไม่มีชื่อ')}</h3>
+        <div class="desc">${escapeHtml(club.description || '')}</div>
+        <button class="btn-follow js-follow-btn" data-club-id="${club.id}">${isFollowing ? '✓ ติดตามแล้ว' : '+ ติดตาม'}</button>
+      </div>`;
+  }
+
+  function deadlineRowHtml(club) {
+    const days = daysUntil(club.deadline);
+    const u = urgencyLabel(days);
+    const d = club.deadline ? new Date(club.deadline) : null;
+    const dayNum = d ? String(d.getDate()).padStart(2, '0') : '--';
+    const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    const monthLabel = d ? months[d.getMonth()] : '-';
+    return `
+      <div class="deadline-row">
+        <div class="datebox"><div class="d mono">${dayNum}</div><div class="m mono">${monthLabel}</div></div>
+        <div class="info">
+          <h3>ปิดรับสมัคร</h3>
+          <div class="club">${escapeHtml(club.name || '-')}</div>
+        </div>
+        <span class="urgency ${u.cls}">${u.text}</span>
+      </div>`;
+  }
+
+  function applicationRowHtml(app, club) {
+    const isApproved = app.status === 'approved';
+    const boxStyle = isApproved
+      ? `background:var(--green-soft); color:var(--green);`
+      : `background:var(--gold-soft); color:#8a651f;`;
+    const label = isApproved ? 'ผ่าน' : (app.status === 'rejected' ? 'ไม่ผ่าน' : 'รอผล');
+    const dateLabel = isApproved
+      ? `อนุมัติเมื่อ ${formatThaiDate(app.appliedAt)}`
+      : `ส่งใบสมัครเมื่อ ${formatThaiDate(app.appliedAt)}`;
+    return `
+      <div class="deadline-row">
+        <div class="datebox" style="${boxStyle}"><div class="d mono" style="font-size:12px;">${label}</div></div>
+        <div class="info">
+          <h3>${escapeHtml(club ? club.name : 'ชมรม (ไม่พบข้อมูล)')}</h3>
+          <div class="club">${dateLabel}</div>
+        </div>
+        <span class="urgency ${isApproved ? '' : 'mid'}" style="${isApproved ? 'background:var(--green-soft); color:var(--green);' : ''}">${isApproved ? 'อนุมัติแล้ว' : (app.status === 'rejected' ? 'ไม่ผ่าน' : 'รอผล')}</span>
+      </div>`;
+  }
+
+  // ===== Master render function — call after any data change =====
+  function renderEverything() {
+    const followedClubs = followsList
+      .map(f => clubsById[f.clubId])
+      .filter(Boolean);
+
+    const memberClubs = applicationsList
+      .filter(a => a.status === 'approved')
+      .map(a => clubsById[a.clubId])
+      .filter(Boolean);
+
+    const pendingCount = applicationsList.filter(a => a.status === 'pending').length;
+    const approvedCount = applicationsList.filter(a => a.status === 'approved').length;
+    const totalApps = applicationsList.length;
+    const noAppCount = Math.max(followedClubs.length - totalApps, 0);
+
+    // clubs with an upcoming deadline, from what the user follows or applied to
+    const relevantClubIds = new Set([
+      ...followsList.map(f => f.clubId),
+      ...applicationsList.map(a => a.clubId)
+    ]);
+    const upcomingClubs = [...relevantClubIds]
+      .map(id => clubsById[id])
+      .filter(c => c && c.deadline && daysUntil(c.deadline) !== null && daysUntil(c.deadline) >= 0)
+      .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
+    // ---- stat cards ----
+    setText('statFollowing', followsList.length);
+    setText('statPending', pendingCount);
+    setText('statUpcoming', upcomingClubs.length);
+    setText('statApproved', approvedCount);
+
+    // ---- welcome banner ----
+    const headline = document.getElementById('welcomeHeadline');
+    const sub = document.getElementById('welcomeSub');
+    if (headline && sub) {
+      if (upcomingClubs.length > 0) {
+        headline.textContent = `คุณมี ${upcomingClubs.length} กิจกรรมที่ต้องติดตาม`;
+        const nearest = upcomingClubs[0];
+        sub.textContent = `อย่าลืมเช็กกำหนดปิดรับสมัครของ ${nearest.name} ก่อนวันที่ ${formatThaiDate(nearest.deadline)}`;
+      } else if (followsList.length === 0) {
+        headline.textContent = 'ยังไม่ได้ติดตามชมรมไหนเลย';
+        sub.textContent = 'ลองไปหน้า "ค้นหาชมรม" เพื่อเริ่มติดตามชมรมที่สนใจ';
+      } else {
+        headline.textContent = 'ตอนนี้ยังไม่มีกำหนดการที่ต้องรีบ';
+        sub.textContent = 'เดี๋ยวจะแจ้งเตือนให้เมื่อมีวันปิดรับสมัครใกล้เข้ามา';
+      }
+    }
+
+    // ---- deadlines (home, top 3) ----
+    const deadlineListHome = document.getElementById('deadlineListHome');
+    if (deadlineListHome) {
+      deadlineListHome.innerHTML = upcomingClubs.length
+        ? upcomingClubs.slice(0, 3).map(deadlineRowHtml).join('')
+        : emptyState('ยังไม่มีกำหนดการที่ต้องติดตามตอนนี้', '🗓️');
+    }
+
+    // ---- deadlines (calendar page, full list) ----
+    const deadlineListFull = document.getElementById('deadlineListFull');
+    if (deadlineListFull) {
+      deadlineListFull.innerHTML = upcomingClubs.length
+        ? upcomingClubs.map(deadlineRowHtml).join('')
+        : emptyState('ยังไม่มีกำหนดการในปฏิทินของคุณ ลองติดตามชมรมที่สนใจก่อน', '🗓️');
+    }
+
+    // ---- progress ring ----
+    const ring = document.getElementById('progressRing');
+    if (ring) {
+      const circumference = 226;
+      const approvedFrac = totalApps ? approvedCount / totalApps : 0;
+      const pendingFrac = totalApps ? pendingCount / totalApps : 0;
+      let svgCircles = `<circle cx="44" cy="44" r="36" fill="none" stroke="#EFE7D2" stroke-width="10"/>`;
+      if (approvedCount > 0) {
+        svgCircles += `<circle cx="44" cy="44" r="36" fill="none" stroke="#3E8A56" stroke-width="10" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference * (1 - approvedFrac)}" stroke-linecap="round" transform="rotate(-90 44 44)"/>`;
+      }
+      if (pendingCount > 0) {
+        svgCircles += `<circle cx="44" cy="44" r="36" fill="none" stroke="#C0912E" stroke-width="10" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference * (1 - pendingFrac)}" stroke-linecap="round" transform="rotate(${-90 + approvedFrac * 360} 44 44)"/>`;
+      }
+      ring.innerHTML = svgCircles;
+    }
+    setText('ringTotal', totalApps);
+    setText('legendApproved', approvedCount);
+    setText('legendPending', pendingCount);
+    setText('legendNone', noAppCount);
+
+    // ---- followed clubs (home preview, max 3) ----
+    const followedClubsHome = document.getElementById('followedClubsHome');
+    if (followedClubsHome) {
+      followedClubsHome.innerHTML = followedClubs.length
+        ? followedClubs.slice(0, 3).map(c => clubCardHtml(c)).join('')
+        : emptyState('ยังไม่ได้ติดตามชมรมไหนเลย ลองไปที่หน้า "ค้นหาชมรม"', '📌');
+    }
+    const followedCountLink = document.getElementById('followedCountLink');
+    if (followedCountLink) followedCountLink.textContent = `ดูทั้งหมด (${followedClubs.length}) →`;
+
+    // ---- recommended ----
+    const recommendedClubs = document.getElementById('recommendedClubs');
+    if (recommendedClubs) {
+      const followedIds = new Set(followsList.map(f => f.clubId));
+      const candidates = Object.values(clubsById).filter(c => !followedIds.has(c.id));
+      recommendedClubs.innerHTML = candidates.length
+        ? candidates.slice(0, 6).map(recCardHtml).join('')
+        : emptyState('ยังไม่มีชมรมในระบบให้แนะนำตอนนี้ (เร็วๆ นี้)', '✨');
+    }
+
+    // ---- my clubs page ----
+    const followingClubsFull = document.getElementById('followingClubsFull');
+    const followingCountLabel = document.getElementById('followingCountLabel');
+    if (followingClubsFull) {
+      followingClubsFull.innerHTML = followedClubs.length
+        ? followedClubs.map(c => clubCardHtml(c, { showFollowToggle: true })).join('')
+        : emptyState('ยังไม่ได้ติดตามชมรมไหนเลย', '📌');
+    }
+    if (followingCountLabel) followingCountLabel.textContent = `กำลังติดตาม (${followedClubs.length})`;
+
+    const memberClubsFull = document.getElementById('memberClubsFull');
+    const memberCountLabel = document.getElementById('memberCountLabel');
+    if (memberClubsFull) {
+      memberClubsFull.innerHTML = memberClubs.length
+        ? memberClubs.map(c => clubCardHtml(c, { forceStatus: { label: 'เป็นสมาชิกแล้ว', cls: 'approved' } })).join('')
+        : emptyState('ยังไม่ได้เป็นสมาชิกชมรมไหนเลย', '🎓');
+    }
+    if (memberCountLabel) memberCountLabel.textContent = `เป็นสมาชิกแล้ว (${memberClubs.length})`;
+
+    // ---- search page ----
+    renderSearchResults(document.getElementById('searchInput') ? document.getElementById('searchInput').value : '');
+
+    // ---- applications page ----
+    const applicationsListEl = document.getElementById('applicationsList');
+    if (applicationsListEl) {
+      applicationsListEl.innerHTML = applicationsList.length
+        ? applicationsList
+            .slice()
+            .sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt))
+            .map(a => applicationRowHtml(a, clubsById[a.clubId]))
+            .join('')
+        : emptyState('ยังไม่เคยส่งใบสมัครชมรมไหนเลย', '📄');
+    }
+  }
+
+  function renderSearchResults(keyword) {
+    const searchResults = document.getElementById('searchResults');
+    if (!searchResults) return;
+    const all = Object.values(clubsById);
+    const kw = (keyword || '').trim().toLowerCase();
+    const filtered = kw
+      ? all.filter(c =>
+          (c.name || '').toLowerCase().includes(kw) ||
+          (c.category || '').toLowerCase().includes(kw))
+      : all;
+
+    if (all.length === 0) {
+      searchResults.innerHTML = emptyState('ยังไม่มีชมรมในระบบตอนนี้ ระบบเพิ่มชมรมกำลังจะเปิดใช้งานเร็วๆ นี้', '🏗️');
       return;
     }
+    searchResults.innerHTML = filtered.length
+      ? filtered.map(c => clubCardHtml(c, { showFollowToggle: true })).join('')
+      : emptyState('ไม่พบชมรมที่ตรงกับคำค้นหา', '🔍');
+  }
 
-    const snapshot = await getDoc(doc(db, 'students', user.uid));
-    const profile = snapshot.exists() ? snapshot.data() : null;
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
 
-    const email = user.email || (profile ? profile.email : '') || '';
-    const shortAvatar = initials(email);
-    const facultyLabel = profile && profile.faculty ? (facultyShort[profile.faculty] || profile.faculty) : 'ยังไม่ระบุคณะ';
-    const yearLabel = profile && profile.year ? profile.year : '-';
-
-    greetingName = 'สวัสดี';
-
-    // sidebar
-    const sidebarAvatar = document.getElementById('sidebarAvatar');
-    const sidebarName = document.getElementById('sidebarName');
-    const sidebarRole = document.getElementById('sidebarRole');
-    if (sidebarAvatar) sidebarAvatar.textContent = shortAvatar;
-    if (sidebarName) sidebarName.textContent = email;
-    if (sidebarRole) sidebarRole.textContent = `${facultyLabel} · ${yearLabel}`;
-
-    // topbar
-    const topbarAvatar = document.getElementById('topbarAvatar');
-    const pageTitleEl = document.getElementById('page-title');
-    const todayDateEl = document.getElementById('todayDate');
-    if (topbarAvatar) topbarAvatar.textContent = shortAvatar;
-    if (pageTitleEl) pageTitleEl.textContent = greetingName;
-    if (todayDateEl) {
-      todayDateEl.textContent = new Date().toLocaleDateString('th-TH', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-      });
+  // ===== Event delegation for follow / apply / view buttons =====
+  document.addEventListener('click', async (e) => {
+    const followBtn = e.target.closest('.js-follow-btn');
+    if (followBtn && currentUid) {
+      e.preventDefault();
+      followBtn.disabled = true;
+      await toggleFollow(followBtn.dataset.clubId, currentUid);
+      return;
     }
+    const viewBtn = e.target.closest('.js-view-btn');
+    if (viewBtn) {
+      e.preventDefault();
+      alert('หน้ารายละเอียดชมรมยังอยู่ระหว่างพัฒนา (เร็วๆ นี้)');
+      return;
+    }
+  });
 
-    // profile page
-    const profileAvatar = document.getElementById('profileAvatar');
-    const profileName = document.getElementById('profileName');
-    const profileStudentId = document.getElementById('profileStudentId');
-    const profileEmail = document.getElementById('profileEmail');
-    const profileFaculty = document.getElementById('profileFaculty');
-    const profileYear = document.getElementById('profileYear');
-    const profileCreatedAt = document.getElementById('profileCreatedAt');
+  // ===== Search input =====
+  document.addEventListener('input', (e) => {
+    if (e.target && e.target.id === 'searchInput') {
+      renderSearchResults(e.target.value);
+    }
+  });
 
-    if (profileAvatar) profileAvatar.textContent = shortAvatar;
-    if (profileName) profileName.textContent = email;
-    if (profileStudentId) profileStudentId.textContent = 'รหัสนักศึกษา ' + (profile && profile.studentId ? profile.studentId : '-');
-    if (profileEmail) profileEmail.textContent = email;
-    if (profileFaculty) profileFaculty.textContent = profile && profile.faculty ? profile.faculty : '-';
-    if (profileYear) profileYear.textContent = yearLabel;
-    if (profileCreatedAt) profileCreatedAt.textContent = formatThaiDate(profile ? profile.createdAt : null);
+  // ===== Welcome CTA + "ดูทั้งหมด" buttons route through nav switcher =====
+  document.addEventListener('click', (e) => {
+    const jump = e.target.closest('[data-page]');
+    if (jump && !jump.classList.contains('nav-item')) {
+      const target = jump.getAttribute('data-page');
+      const navItem = document.querySelector(`.nav-item[data-page="${target}"]`);
+      if (navItem) navItem.click();
+    }
+  });
+
+  // ===== Settings toggles =====
+  const defaultPrefs = { deadlineAlerts: true, newClubAlerts: true, publicProfile: false };
+  let currentPrefs = { ...defaultPrefs };
+
+  function renderToggle(id, field) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    const isOn = !!currentPrefs[field];
+    btn.textContent = isOn ? 'เปิดอยู่' : 'ปิดอยู่';
+    btn.classList.toggle('on', isOn);
+    btn.classList.toggle('off', !isOn);
+  }
+
+  function renderAllToggles() {
+    renderToggle('toggleDeadline', 'deadlineAlerts');
+    renderToggle('toggleNewClub', 'newClubAlerts');
+    renderToggle('togglePublicProfile', 'publicProfile');
+  }
+
+  document.addEventListener('click', async (e) => {
+    const toggleBtn = e.target.closest('.toggle-btn');
+    if (!toggleBtn || !currentUid) return;
+    const field = toggleBtn.dataset.field;
+    currentPrefs[field] = !currentPrefs[field];
+    renderAllToggles();
+    try {
+      await setDoc(doc(db, 'students', currentUid), { preferences: currentPrefs }, { merge: true });
+    } catch (err) {
+      console.error('Failed to save preference', err);
+    }
   });
 
   // ===== Logout =====
@@ -813,11 +1095,11 @@
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       await signOut(auth);
-      window.location.href = '/index.html';
+      window.location.href = '/login/login.html';
     });
   }
 
-  // ===== Sidebar nav page switching (unchanged behavior) =====
+  // ===== Sidebar nav page switching =====
   const pageTitles = {
     search: 'ค้นหาชมรม',
     myclubs: 'ชมรมของฉัน',
@@ -847,6 +1129,69 @@
 
       document.querySelector('.content').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+  });
+
+  // ===== Auth guard + initial data load =====
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = '/login/login.htmllogin.htm';
+      return;
+    }
+    currentUid = user.uid;
+
+    const snapshot = await getDoc(doc(db, 'students', user.uid));
+    const profile = snapshot.exists() ? snapshot.data() : null;
+    if (profile && profile.preferences) {
+      currentPrefs = { ...defaultPrefs, ...profile.preferences };
+    }
+    renderAllToggles();
+
+    const email = user.email || (profile ? profile.email : '') || '';
+    const shortAvatar = initials(email);
+    const facultyLabel = profile && profile.faculty ? (facultyShort[profile.faculty] || profile.faculty) : 'ยังไม่ระบุคณะ';
+    const yearLabel = profile && profile.year ? profile.year : '-';
+
+    greetingName = 'สวัสดี';
+
+    // sidebar
+    setText('sidebarAvatar', shortAvatar);
+    setText('sidebarName', email);
+    setText('sidebarRole', `${facultyLabel} · ${yearLabel}`);
+
+    // topbar
+    setText('topbarAvatar', shortAvatar);
+    setText('page-title', greetingName);
+    const todayDateEl = document.getElementById('todayDate');
+    if (todayDateEl) {
+      todayDateEl.textContent = new Date().toLocaleDateString('th-TH', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+    }
+
+    // profile page
+    setText('profileAvatar', shortAvatar);
+    setText('profileName', email);
+    setText('profileStudentId', 'รหัสนักศึกษา ' + (profile && profile.studentId ? profile.studentId : '-'));
+    setText('profileEmail', email);
+    setText('profileFaculty', profile && profile.faculty ? profile.faculty : '-');
+    setText('profileYear', yearLabel);
+    setText('profileCreatedAt', formatThaiDate(profile ? profile.createdAt : null));
+
+    // load clubs / follows / applications, then render everything
+    try {
+      const [clubs, follows, applications] = await Promise.all([
+        loadClubs(),
+        loadFollows(user.uid),
+        loadApplications(user.uid)
+      ]);
+      clubsById = clubs;
+      followsList = follows;
+      applicationsList = applications;
+    } catch (err) {
+      console.error('Failed to load dashboard data', err);
+    }
+
+    renderEverything();
   });
 </script>
 
