@@ -54,6 +54,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
   let clubsById = {};       // { clubId: clubData }
   let followsList = [];     // [{ clubId, followedAt }]
   let applicationsList = []; // [{ clubId, status, appliedAt }]
+  let activitiesList = []; // [{ id, clubId, ...activity }]
+  let activityAttendance = {}; // { activityId: 'joined' | 'declined' }
 
   // ===== Small helpers =====
   function initials(email) {
@@ -69,9 +71,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
     return `${months[d.getMonth()]} ${d.getFullYear() + 543}`;
   }
 
+  function dateValue(value) {
+    if (!value) return 0;
+    const date = value.toDate ? value.toDate() : new Date(value);
+    return isNaN(date) ? 0 : date.getTime();
+  }
+
   function daysUntil(isoDate) {
     if (!isoDate) return null;
-    const target = new Date(isoDate);
+    const target = isoDate.toDate ? isoDate.toDate() : new Date(isoDate);
     if (isNaN(target)) return null;
     const now = new Date();
     const diffMs = target.setHours(23,59,59,999) - now.getTime();
@@ -143,6 +151,45 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
     });
     applicationsList.push({ id: appId, uid, clubId, status: 'pending', appliedAt: new Date().toISOString() });
     renderEverything();
+  }
+
+  async function loadActivities(uid) {
+    const memberClubIds = applicationsList.filter(application => application.status === 'approved').map(application => application.clubId);
+    const results = await Promise.all(memberClubIds.map(async clubId => {
+      const snapshot = await getDocs(query(collection(db, 'activities'), where('clubId', '==', clubId)));
+      return snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+    }));
+    activitiesList = results.flat().sort((a, b) => dateValue(b.date) - dateValue(a.date));
+    activityAttendance = {};
+    await Promise.all(activitiesList.map(async activity => {
+      const attendance = await getDoc(doc(db, 'activityAttendance', `${uid}_${activity.id}`));
+      if (attendance.exists()) activityAttendance[activity.id] = attendance.data().status;
+    }));
+  }
+
+  async function setActivityAttendance(activityId, status, button) {
+    if (!currentUid || !activitiesList.some(activity => activity.id === activityId)) return;
+    button.disabled = true;
+    try {
+      await setDoc(doc(db, 'activityAttendance', `${currentUid}_${activityId}`), { uid: currentUid, activityId, status, updatedAt: serverTimestamp() });
+      activityAttendance[activityId] = status;
+      renderActivities();
+    } catch (error) {
+      console.error('Failed to update activity attendance', error);
+      button.disabled = false;
+      showDataError('บันทึกการเข้าร่วมกิจกรรมไม่สำเร็จ กรุณาลองใหม่');
+    }
+  }
+
+  function renderActivities() {
+    const container = document.getElementById('memberActivities');
+    if (!container) return;
+    container.innerHTML = activitiesList.length ? activitiesList.map(activity => {
+      const club = clubsById[activity.clubId];
+      const attendance = activityAttendance[activity.id];
+      const date = activity.date ? (activity.date.toDate ? activity.date.toDate() : new Date(activity.date)) : null;
+      return `<article class="activity-card" data-activity-card="${escapeHtml(activity.id)}"><div class="activity-date"><b>${date && !isNaN(date) ? String(date.getDate()).padStart(2, '0') : '--'}</b><span>${date && !isNaN(date) ? date.toLocaleDateString('th-TH', { month: 'short' }) : '-'}</span></div><div class="activity-info"><span class="activity-club">${escapeHtml(club ? club.name : 'ชมรม')}</span><h3>${escapeHtml(activity.title || 'กิจกรรม')}</h3><p>${escapeHtml(activity.description || '')}</p><small>${escapeHtml(formatThaiDate(activity.date))} · ${escapeHtml(activity.location || 'ไม่ระบุสถานที่')}</small></div><div class="activity-actions">${attendance ? `<span class="activity-status ${attendance}">${attendance === 'joined' ? 'ยืนยันเข้าร่วมแล้ว' : 'ปฏิเสธแล้ว'}</span>` : `<button class="activity-join" type="button" data-activity-action="joined" data-activity-id="${escapeHtml(activity.id)}">เข้าร่วม</button><button class="activity-decline" type="button" data-activity-action="declined" data-activity-id="${escapeHtml(activity.id)}">ปฏิเสธ</button>`}</div></article>`;
+    }).join('') : emptyState('ยังไม่มีกิจกรรมสำหรับชมรมที่คุณเป็นสมาชิก', '📅');
   }
 
   function showDataError(message) {
@@ -296,6 +343,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
     setText('followingNavCount', followsList.length);
     setText('applicationNavCount', totalApps);
     renderNotifications();
+    renderActivities();
 
     // ---- welcome banner ----
     const headline = document.getElementById('welcomeHeadline');
@@ -433,16 +481,27 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
   function renderNotifications() {
     const list = document.getElementById('notificationList');
     if (!list) return;
-    const notifications = applicationsList
-      .slice()
-      .sort((a, b) => new Date(b.reviewedAt || b.appliedAt) - new Date(a.reviewedAt || a.appliedAt));
+    const applicationNotifications = applicationsList.map(application => ({
+      id: application.id,
+      kind: 'application',
+      sortDate: application.reviewedAt || application.appliedAt,
+      club: clubsById[application.clubId],
+      status: application.status === 'approved' ? 'อนุมัติแล้ว' : application.status === 'rejected' ? 'ไม่ผ่านการคัดเลือก' : 'รอผลสมัคร',
+      type: application.status === 'approved' ? 'approved' : application.status === 'rejected' ? 'rejected' : 'pending'
+    }));
+    const activityNotifications = activitiesList.map(activity => {
+      const attendance = activityAttendance[activity.id];
+      const responseText = attendance === 'joined' ? 'คุณยืนยันเข้าร่วมแล้ว' : attendance === 'declined' ? 'คุณปฏิเสธการเข้าร่วมแล้ว' : 'กิจกรรมใหม่สำหรับสมาชิก';
+      return { id: activity.id, kind: 'activity', sortDate: activity.updatedAt || activity.createdAt || activity.date, club: clubsById[activity.clubId], title: activity.title, status: responseText, type: 'activity' };
+    });
+    const notifications = [...applicationNotifications, ...activityNotifications]
+      .sort((a, b) => new Date(b.sortDate) - new Date(a.sortDate));
     list.innerHTML = notifications.length
-      ? notifications.map(application => {
-          const club = clubsById[application.clubId];
-          const status = application.status === 'approved' ? 'อนุมัติแล้ว' : application.status === 'rejected' ? 'ไม่ผ่านการคัดเลือก' : 'รอผลสมัคร';
-          const type = application.status === 'approved' ? 'approved' : application.status === 'rejected' ? 'rejected' : 'pending';
-          const date = application.status === 'pending' ? application.appliedAt : (application.reviewedAt || application.appliedAt);
-          return `<button class="notification-item" type="button" data-notification-app="${escapeHtml(application.id)}"><span class="notification-mark ${type}"></span><span><b>${escapeHtml(club ? club.name : 'ชมรม')}</b><small>${status} · ${formatThaiDate(date)}</small></span></button>`;
+      ? notifications.map(notification => {
+          const label = notification.kind === 'activity' ? notification.title : (notification.club ? notification.club.name : 'ชมรม');
+          const detail = notification.kind === 'activity' ? `${notification.status} · ${formatThaiDate(notification.sortDate)}` : `${notification.status} · ${formatThaiDate(notification.sortDate)}`;
+          const target = notification.kind === 'activity' ? `data-notification-activity="${escapeHtml(notification.id)}"` : `data-notification-app="${escapeHtml(notification.id)}"`;
+          return `<button class="notification-item" type="button" ${target}><span class="notification-mark ${notification.type}"></span><span><b>${escapeHtml(label)}</b><small>${escapeHtml(detail)}</small></span></button>`;
         }).join('')
       : '<div class="notification-empty">ยังไม่มีการแจ้งเตือน</div>';
   }
@@ -518,6 +577,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
       }
       return;
     }
+  });
+
+  document.addEventListener('click', event => {
+    const button = event.target.closest('[data-activity-action]');
+    if (button) setActivityAttendance(button.dataset.activityId, button.dataset.activityAction, button);
   });
 
   // ===== Search input =====
@@ -619,6 +683,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
   if (closeNotifications) closeNotifications.addEventListener('click', () => { notificationPanel.hidden = true; });
   document.addEventListener('click', (event) => {
     if (notificationPanel && !event.target.closest('.notification-panel, #notificationBtn')) notificationPanel.hidden = true;
+  });
+  document.addEventListener('click', (event) => {
+    const notification = event.target.closest('[data-notification-activity]');
+    if (!notification) return;
+    notificationPanel.hidden = true;
+    const activityCard = document.querySelector(`[data-activity-card="${notification.dataset.notificationActivity}"]`);
+    if (activityCard) activityCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
   document.addEventListener('click', (event) => {
     const notification = event.target.closest('[data-notification-app]');
@@ -726,6 +797,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
       clubsById = clubs;
       followsList = follows;
       applicationsList = applications;
+      await loadActivities(user.uid);
       const adminProfile = await getDoc(doc(db, 'clubAdmins', user.uid));
       const managesClub = Object.values(clubsById).some(club => club.adminUid === user.uid);
       if (clubAdminNav) clubAdminNav.hidden = !adminProfile.exists() && !managesClub;

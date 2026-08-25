@@ -20,6 +20,9 @@ let ownedClubs = [];
 let applications = [];
 let profiles = {};
 let activeStatus = 'all';
+let activeClubId = 'all';
+let activities = [];
+let activityResponses = {};
 
 const $ = id => document.getElementById(id);
 const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value == null ? '' : String(value); return node.innerHTML; };
@@ -56,13 +59,22 @@ function renderClubs() {
   strip.hidden = ownedClubs.length === 0;
   $('managedClubList').innerHTML = ownedClubs.map(club => `<article class="managed-card"><h3>${escapeHtml(club.emoji || '🏷️')} ${escapeHtml(club.name || 'ไม่มีชื่อชมรม')}</h3><p>${escapeHtml(club.description || 'ยังไม่มีรายละเอียดชมรม')}</p><div class="managed-actions"><button class="edit-club" type="button" data-edit-club="${escapeHtml(club.id)}">แก้ไขข้อมูล</button><button class="delete-club" type="button" data-delete-club="${escapeHtml(club.id)}">ลบชมรม</button></div></article>`).join('');
   $('managedClubs').hidden = ownedClubs.length === 0;
+  $('clubFilter').innerHTML = `<option value="all">ทุกชมรม (${applications.length})</option>` + ownedClubs.map(club => {
+    const count = applications.filter(application => application.clubId === club.id).length;
+    return `<option value="${escapeHtml(club.id)}">${escapeHtml(club.name || 'ไม่มีชื่อชมรม')} (${count})</option>`;
+  }).join('');
+  $('clubFilter').value = activeClubId;
+  $('newClubBtn').hidden = ownedClubs.length > 0;
+  $('newClubBtn').disabled = false;
+  $('newClubBtn').title = '';
 }
 
 function renderStats() {
-  $('totalCount').textContent = applications.length;
-  $('pendingCount').textContent = applications.filter(item => item.status === 'pending').length;
-  $('approvedCount').textContent = applications.filter(item => item.status === 'approved').length;
-  $('rejectedCount').textContent = applications.filter(item => item.status === 'rejected').length;
+  const selectedApplications = activeClubId === 'all' ? applications : applications.filter(item => item.clubId === activeClubId);
+  $('totalCount').textContent = selectedApplications.length;
+  $('pendingCount').textContent = selectedApplications.filter(item => item.status === 'pending').length;
+  $('approvedCount').textContent = selectedApplications.filter(item => item.status === 'approved').length;
+  $('rejectedCount').textContent = selectedApplications.filter(item => item.status === 'rejected').length;
 }
 
 function renderApplications() {
@@ -70,7 +82,7 @@ function renderApplications() {
   const filtered = applications.filter(application => {
     const profile = profiles[application.uid] || {};
     const haystack = [profile.email, profile.studentId, profile.faculty, application.uid, application.clubName].join(' ').toLowerCase();
-    return (activeStatus === 'all' || application.status === activeStatus) && haystack.includes(keyword);
+    return (activeClubId === 'all' || application.clubId === activeClubId) && (activeStatus === 'all' || application.status === activeStatus) && haystack.includes(keyword);
   }).sort((a, b) => String(b.appliedAt || '').localeCompare(String(a.appliedAt || '')));
 
   if (!filtered.length) {
@@ -88,7 +100,7 @@ function renderApplications() {
   }).join('');
 }
 
-function renderAll() { renderClubs(); renderStats(); renderApplications(); }
+function renderAll() { renderClubs(); renderStats(); renderApplications(); renderActivities(); }
 
 function openClubForm(club) {
   $('clubForm').reset();
@@ -110,6 +122,11 @@ async function saveClub(event) {
   event.preventDefault();
   if (!currentUser) return;
   const clubId = $('clubId').value;
+  if (!clubId && ownedClubs.length > 0) {
+    $('clubFormError').textContent = 'บัญชีแอดมินหนึ่งบัญชีสร้างได้เพียงหนึ่งชมรม';
+    $('clubFormError').hidden = false;
+    return;
+  }
   const clubRef = clubId ? doc(db, 'clubs', clubId) : doc(collection(db, 'clubs'));
   const clubData = {
     name: $('clubName').value.trim(),
@@ -139,6 +156,71 @@ async function saveClub(event) {
   } finally {
     submitButton.disabled = false;
   }
+}
+
+async function loadActivityResponses() {
+  const entries = await Promise.all(activities.map(async activity => {
+    const snapshot = await getDocs(query(collection(db, 'activityAttendance'), where('activityId', '==', activity.id)));
+    return [activity.id, snapshot.docs.map(item => item.data())];
+  }));
+  activityResponses = Object.fromEntries(entries);
+}
+
+function responseNames(activityId, status) {
+  return (activityResponses[activityId] || []).filter(response => response.status === status).map(response => {
+    const profile = profiles[response.uid] || {};
+    return profile.displayName || profile.name || profile.email || response.uid;
+  });
+}
+
+function renderActivities() {
+  $('activitiesSection').hidden = ownedClubs.length === 0;
+  $('activityAdminList').innerHTML = activities.length ? activities.map(activity => { const joined = responseNames(activity.id, 'joined'); const declined = responseNames(activity.id, 'declined'); return `<article class="activity-admin-card"><div><h3>${escapeHtml(activity.title)}</h3><p>${escapeHtml(activity.description)}</p><small>${escapeHtml(formatDate(activity.date))} · ${escapeHtml(activity.location || 'ไม่ระบุสถานที่')}</small><div class="activity-response-summary"><span class="response-joined">เข้าร่วม ${joined.length} คน</span><span class="response-declined">ปฏิเสธ ${declined.length} คน</span></div><div class="activity-response-names"><div><b>ผู้เข้าร่วม:</b> ${escapeHtml(joined.length ? joined.join(', ') : 'ยังไม่มี')}</div><div><b>ผู้ปฏิเสธ:</b> ${escapeHtml(declined.length ? declined.join(', ') : 'ยังไม่มี')}</div></div></div><div class="managed-actions"><button class="edit-club" type="button" data-edit-activity="${escapeHtml(activity.id)}">แก้ไข</button><button class="delete-club" type="button" data-delete-activity="${escapeHtml(activity.id)}">ลบ</button></div></article>`; }).join('') : '<div class="empty">ยังไม่มีกิจกรรมของชมรม</div>';
+}
+
+function openActivityForm(activity) {
+  $('activityForm').reset();
+  $('activityId').value = activity ? activity.id : '';
+  $('activityDialogTitle').textContent = activity ? 'แก้ไขกิจกรรม' : 'เพิ่มกิจกรรม';
+  if (activity) {
+    $('activityTitle').value = activity.title || '';
+    $('activityDescription').value = activity.description || '';
+    $('activityDate').value = activity.date ? new Date(activity.date).toISOString().slice(0, 16) : '';
+    $('activityCapacity').value = activity.capacity || '';
+    $('activityLocation').value = activity.location || '';
+  }
+  $('activityFormError').hidden = true;
+  $('activityDialog').showModal();
+}
+
+async function saveActivity(event) {
+  event.preventDefault();
+  if (!currentUser || ownedClubs.length !== 1) return;
+  const activityId = $('activityId').value;
+  const activityRef = activityId ? doc(db, 'activities', activityId) : doc(collection(db, 'activities'));
+  const activity = { clubId: ownedClubs[0].id, adminUid: currentUser.uid, title: $('activityTitle').value.trim(), description: $('activityDescription').value.trim(), date: $('activityDate').value, capacity: Number($('activityCapacity').value) || null, location: $('activityLocation').value.trim(), updatedAt: serverTimestamp() };
+  const button = $('activityForm').querySelector('button[type="submit"]');
+  button.disabled = true;
+  try {
+    if (!activityId) activity.createdAt = serverTimestamp();
+    await setDoc(activityRef, activity, { merge: true });
+    activities = activityId ? activities.map(item => item.id === activityId ? { ...item, ...activity } : item) : [...activities, { id: activityRef.id, ...activity }];
+    activityResponses[activityRef.id] = [];
+    $('activityDialog').close();
+    renderActivities();
+    showFeedback(activityId ? 'บันทึกกิจกรรมแล้ว' : 'เพิ่มกิจกรรมแล้ว');
+  } catch (error) {
+    console.error(error);
+    $('activityFormError').textContent = 'บันทึกกิจกรรมไม่สำเร็จ กรุณาลองใหม่';
+    $('activityFormError').hidden = false;
+  } finally { button.disabled = false; }
+}
+
+async function deleteActivity(activityId, button) {
+  const activity = activities.find(item => item.id === activityId);
+  if (!activity || !currentUser || activity.adminUid !== currentUser.uid || !window.confirm(`ยืนยันลบกิจกรรม “${activity.title}” หรือไม่?`)) return;
+  button.disabled = true;
+  try { await deleteDoc(doc(db, 'activities', activityId)); activities = activities.filter(item => item.id !== activityId); renderActivities(); showFeedback('ลบกิจกรรมแล้ว'); } catch (error) { console.error(error); showFeedback('ลบกิจกรรมไม่สำเร็จ'); button.disabled = false; }
 }
 
 async function deleteClub(clubId, button) {
@@ -202,6 +284,11 @@ async function updateApplicationStatus(id, status, button) {
 }
 
 $('searchInput').addEventListener('input', renderApplications);
+$('clubFilter').addEventListener('change', event => {
+  activeClubId = event.target.value;
+  renderStats();
+  renderApplications();
+});
 $('newClubBtn').addEventListener('click', () => openClubForm());
 $('managedClubList').addEventListener('click', event => {
   const button = event.target.closest('[data-edit-club]');
@@ -215,6 +302,20 @@ $('managedClubList').addEventListener('click', event => {
 $('clubForm').addEventListener('submit', saveClub);
 $('cancelClubBtn').addEventListener('click', () => $('clubDialog').close());
 $('closeClubDialog').addEventListener('click', () => $('clubDialog').close());
+$('newActivityBtn').addEventListener('click', () => openActivityForm());
+$('refreshActivitiesBtn').addEventListener('click', async event => {
+  event.target.disabled = true;
+  try { await loadActivityResponses(); renderActivities(); showFeedback('รีเฟรชการตอบรับแล้ว'); } catch (error) { console.error(error); showFeedback('โหลดการตอบรับไม่สำเร็จ'); } finally { event.target.disabled = false; }
+});
+$('activityForm').addEventListener('submit', saveActivity);
+$('cancelActivityBtn').addEventListener('click', () => $('activityDialog').close());
+$('closeActivityDialog').addEventListener('click', () => $('activityDialog').close());
+$('activityAdminList').addEventListener('click', event => {
+  const editButton = event.target.closest('[data-edit-activity]');
+  if (editButton) { openActivityForm(activities.find(activity => activity.id === editButton.dataset.editActivity)); return; }
+  const deleteButton = event.target.closest('[data-delete-activity]');
+  if (deleteButton) deleteActivity(deleteButton.dataset.deleteActivity, deleteButton);
+});
 document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
   activeStatus = tab.dataset.status;
   document.querySelectorAll('.tab').forEach(item => item.classList.toggle('active', item === tab));
@@ -243,8 +344,12 @@ onAuthStateChanged(auth, async user => {
     if (!ownedClubs.length && !adminProfile.exists()) { window.location.href = '../dashboard/dashboard.html'; return; }
     if (!ownedClubs.length) { renderClubs(); renderStats(); return; }
     await loadApplications();
+    const activitySnapshot = await getDocs(query(collection(db, 'activities'), where('clubId', '==', ownedClubs[0].id), where('adminUid', '==', user.uid)));
+    activities = activitySnapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+    await loadActivityResponses();
     hideFeedback();
     renderAll();
+    renderActivities();
   } catch (error) {
     console.error(error);
     $('applicationList').innerHTML = '<div class="empty">โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่อและ Firestore Rules</div>';

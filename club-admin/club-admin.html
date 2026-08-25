@@ -35,6 +35,11 @@
       <div class="managed-grid" id="managedClubList"></div>
     </section>
 
+    <section class="activities-section" id="activitiesSection" hidden>
+      <div class="section-heading"><div><h2>กิจกรรมของชมรม</h2><span class="muted">สมาชิกที่อนุมัติแล้วจะเห็นและตอบรับกิจกรรม</span></div><div class="activity-heading-actions"><button class="back-link" id="refreshActivitiesBtn" type="button">รีเฟรชการตอบรับ</button><button class="primary-button" id="newActivityBtn" type="button">+ เพิ่มกิจกรรม</button></div></div>
+      <div class="activity-admin-list" id="activityAdminList"><div class="empty">ยังไม่มีกิจกรรม</div></div>
+    </section>
+
     <section class="stats" aria-label="สรุปใบสมัคร">
       <div class="stat"><span class="stat-label">ทั้งหมด</span><strong id="totalCount">0</strong></div>
       <div class="stat pending"><span class="stat-label">รอพิจารณา</span><strong id="pendingCount">0</strong></div>
@@ -44,11 +49,14 @@
 
     <section class="workspace">
       <div class="toolbar">
-        <div class="tabs" role="tablist" aria-label="กรองสถานะใบสมัคร">
+        <div class="toolbar-filters">
+          <label class="club-filter">ชมรมที่กำลังดู<select id="clubFilter"><option value="all">ทุกชมรม</option></select></label>
+          <div class="tabs" role="tablist" aria-label="กรองสถานะใบสมัคร">
           <button class="tab active" type="button" data-status="all">ทั้งหมด</button>
           <button class="tab" type="button" data-status="pending">รอพิจารณา</button>
           <button class="tab" type="button" data-status="approved">อนุมัติแล้ว</button>
           <button class="tab" type="button" data-status="rejected">ไม่ผ่าน</button>
+          </div>
         </div>
         <label class="search-box">
           <span aria-hidden="true">⌕</span>
@@ -77,6 +85,18 @@
       <label>ช่องทางติดต่อ<input id="clubContact" type="text" maxlength="160" placeholder="อีเมล หรือ Line ของชมรม"></label>
       <p class="form-error" id="clubFormError" hidden></p>
       <div class="form-actions"><button class="back-link" id="cancelClubBtn" type="button">ยกเลิก</button><button class="primary-button" type="submit">บันทึกข้อมูล</button></div>
+    </form>
+  </dialog>
+  <dialog id="activityDialog" class="detail-dialog">
+    <div class="dialog-head"><h2 id="activityDialogTitle">เพิ่มกิจกรรม</h2><button class="close-button" id="closeActivityDialog" type="button" aria-label="ปิด">&times;</button></div>
+    <form id="activityForm" class="club-form">
+      <input id="activityId" type="hidden">
+      <label>ชื่อกิจกรรม<input id="activityTitle" type="text" required maxlength="120"></label>
+      <label>รายละเอียดกิจกรรม<textarea id="activityDescription" required maxlength="1200" rows="5"></textarea></label>
+      <div class="form-row"><label>วันและเวลา<input id="activityDate" type="datetime-local" required></label><label>จำนวนรับ<input id="activityCapacity" type="number" min="1" max="10000" placeholder="ไม่จำกัด"></label></div>
+      <label>สถานที่ / ช่องทางเข้าร่วม<input id="activityLocation" type="text" maxlength="160" placeholder="เช่น ห้องประชุม หรือ Link Online"></label>
+      <p class="form-error" id="activityFormError" hidden></p>
+      <div class="form-actions"><button class="back-link" id="cancelActivityBtn" type="button">ยกเลิก</button><button class="primary-button" type="submit">บันทึกกิจกรรม</button></div>
     </form>
   </dialog>
   <script type="module" src="club-admin.js"></script>
