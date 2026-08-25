@@ -10,11 +10,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="homepage.css">
 </head>
-<body>
+<body id="top">
 
 <header>
   <div class="header-inner">
-    <a href="#" class="logo"><span class="seal">TU</span>ClubTU</a>
+    <a href="#top" class="logo"><span class="seal">TU</span>ClubTU</a>
     <nav class="main-nav">
       <a href="#categories">หมวดหมู่</a>
       <a href="#deadlines">กำหนดการ</a>
@@ -22,7 +22,7 @@
       <a href="#how">วิธีใช้งาน</a>
     </nav>
     <div class="header-actions">
-      <div class="search-pill">🔍 ค้นหาชมรม...</div>
+      <label class="search-pill home-search" for="homeSearch">🔍 <input id="homeSearch" type="search" placeholder="ค้นหาชมรม..." autocomplete="off"></label>
       <a href="login/login.html" class="btn btn-ghost">เข้าสู่ระบบ</a>
       <a href="register/register.html" class="btn btn-primary">สมัครสมาชิก</a>
       <button class="menu-toggle" id="menuToggle" aria-label="เปิดเมนู" aria-expanded="false">
@@ -35,8 +35,8 @@
     <a href="#deadlines">กำหนดการ</a>
     <a href="#featured">ชมรมแนะนำ</a>
     <a href="#how">วิธีใช้งาน</a>
-    <a href="#" class="btn btn-ghost">เข้าสู่ระบบ</a>
-    <a href="#" class="btn btn-primary">สมัครสมาชิก</a>
+    <a href="login/login.html" class="btn btn-ghost">เข้าสู่ระบบ</a>
+    <a href="register/register.html" class="btn btn-primary">สมัครสมาชิก</a>
   </nav>
 </header>
 
@@ -78,10 +78,10 @@
 
 <div class="stats-strip">
   <div class="stats-inner">
-    <div class="stat"><div class="num">120+</div><div class="lbl">ชมรมทั้งหมด</div></div>
+    <div class="stat"><div class="num">0</div><div class="lbl">ชมรมทั้งหมด</div></div>
     <div class="stat"><div class="num">14</div><div class="lbl">หมวดหมู่ความสนใจ</div></div>
-    <div class="stat"><div class="num">8,400+</div><div class="lbl">นักศึกษาที่ใช้งาน</div></div>
-    <div class="stat"><div class="num">36</div><div class="lbl">กิจกรรมเปิดรับตอนนี้</div></div>
+    <div class="stat"><div class="num">0</div><div class="lbl">นักศึกษาที่ใช้งาน</div></div>
+    <div class="stat"><div class="num">0</div><div class="lbl">ชมรมเปิดรับตอนนี้</div></div>
   </div>
 </div>
 
@@ -92,9 +92,9 @@
         <h2>เลือกตามความสนใจ</h2>
         <div class="sub">แตะหมวดหมู่ที่ใช่ เพื่อดูชมรมทั้งหมดในกลุ่มนั้นทันที</div>
       </div>
-      <a href="#" class="club-link">ดูหมวดหมู่ทั้งหมด →</a>
+      <a href="#categories" class="club-link">ดูหมวดหมู่ทั้งหมด →</a>
     </div>
-    <div class="stamp-row">
+    <div class="stamp-row" id="categoryList">
       <div class="stamp"><span class="ico">⚽</span>กีฬา</div>
       <div class="stamp"><span class="ico">🎭</span>ศิลปะการแสดง</div>
       <div class="stamp"><span class="ico">🎵</span>ดนตรี</div>
@@ -117,7 +117,7 @@
         <div class="sub">อย่าพลาดช่วงเวลาสำคัญ — เรียงตามวันที่ใกล้ที่สุดก่อน</div>
       </div>
     </div>
-    <div class="deadline-row">
+    <div class="deadline-row" id="deadlineList">
       <div class="deadline-card">
         <div class="date mono">24</div>
         <div class="month mono">ส.ค. 2569</div>
@@ -157,9 +157,9 @@
         <h2>ชมรมแนะนำสำหรับคุณ</h2>
         <div class="sub">คัดจากชมรมที่มีคนสมัครเยอะและกิจกรรมต่อเนื่อง</div>
       </div>
-      <a href="#" class="club-link">ดูชมรมทั้งหมด →</a>
+      <a href="#featured" class="club-link">ดูชมรมทั้งหมด →</a>
     </div>
-    <div class="club-grid">
+    <div class="club-grid" id="featuredClubList">
       <div class="club-card">
         <div class="club-banner"><div class="club-emoji">💻</div></div>
         <div class="club-body">
@@ -168,7 +168,7 @@
           <p class="club-desc">รวมคนชอบเขียนโค้ด ทำโปรเจกต์จริง แข่งแฮกกาธอน และแลกเปลี่ยนความรู้สายเทคทุกสัปดาห์</p>
           <div class="club-foot">
             <span class="status-pill open">เปิดรับ</span>
-            <a href="#" class="club-link">ดูรายละเอียด</a>
+            <a href="login/login.html" class="club-link">ดูรายละเอียด</a>
           </div>
         </div>
       </div>
@@ -180,7 +180,7 @@
           <p class="club-desc">ออกค่ายสร้างห้องสมุดและซ่อมแซมโรงเรียนในต่างจังหวัด ปีละ 4 ครั้ง เปิดรับทุกชั้นปี</p>
           <div class="club-foot">
             <span class="status-pill soon">ใกล้ปิดรับ</span>
-            <a href="#" class="club-link">ดูรายละเอียด</a>
+            <a href="login/login.html" class="club-link">ดูรายละเอียด</a>
           </div>
         </div>
       </div>
@@ -192,7 +192,7 @@
           <p class="club-desc">ฝึกซ้อมและแสดงในงานประเพณีของมหาวิทยาลัยทุกภาคการศึกษา ไม่มีพื้นฐานก็สมัครได้</p>
           <div class="club-foot">
             <span class="status-pill open">เปิดรับ</span>
-            <a href="#" class="club-link">ดูรายละเอียด</a>
+            <a href="login/login.html" class="club-link">ดูรายละเอียด</a>
           </div>
         </div>
       </div>
@@ -232,8 +232,8 @@
   <h2>ยังไม่รู้จะเข้าชมรมไหนดี?</h2>
   <p>ทำแบบทดสอบความสนใจ 2 นาที แล้วเราจะแนะนำชมรมที่เหมาะกับคุณที่สุด</p>
   <div class="btns">
-    <a href="#" class="btn btn-on-crimson">ทำแบบทดสอบความสนใจ</a>
-    <a href="#" class="btn btn-outline-light">เรียกดูชมรมทั้งหมด</a>
+    <a href="login/login.html" class="btn btn-on-crimson">ทำแบบทดสอบความสนใจ</a>
+    <a href="#featured" class="btn btn-outline-light">เรียกดูชมรมทั้งหมด</a>
   </div>
 </div>
 
@@ -264,17 +264,17 @@
       <div>
         <h4>สำหรับชมรม</h4>
         <ul>
-          <li><a href="#">ลงทะเบียนชมรม</a></li>
-          <li><a href="#">จัดการสมาชิก</a></li>
-          <li><a href="#">คู่มือการใช้งาน</a></li>
+          <li><a href="login/login.html">ลงทะเบียนชมรม</a></li>
+          <li><a href="club-admin/club-admin.html">จัดการสมาชิก</a></li>
+          <li><a href="readme.md">คู่มือการใช้งาน</a></li>
         </ul>
       </div>
       <div>
         <h4>ติดต่อ</h4>
         <ul>
-          <li><a href="#">ฝ่ายกิจการนักศึกษา มธ.</a></li>
-          <li><a href="#">Line Official: @clubtu</a></li>
-          <li><a href="#">clubtu@tu.ac.th</a></li>
+          <li><a href="mailto:clubtu@tu.ac.th">ฝ่ายกิจการนักศึกษา มธ.</a></li>
+          <li><a href="https://line.me/">Line Official: @clubtu</a></li>
+          <li><a href="mailto:clubtu@tu.ac.th">clubtu@tu.ac.th</a></li>
         </ul>
       </div>
     </div>
@@ -285,6 +285,11 @@
   </div>
 </footer>
 
-<script src="homepage.js"></script>
+<dialog class="home-club-dialog" id="homeClubDialog">
+  <button class="home-club-close" id="closeHomeClubDialog" type="button" aria-label="ปิดรายละเอียดชมรม">&times;</button>
+  <div id="homeClubDetail"></div>
+</dialog>
+
+<script type="module" src="homepage.js"></script>
 </body>
 </html>

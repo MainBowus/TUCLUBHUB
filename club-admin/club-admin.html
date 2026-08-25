@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จัดการผู้สมัครชมรม - ClubTU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="club-admin.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="../dashboard/dashboard.html"><span class="seal">TU</span><span>ClubTU</span></a>
+      <div class="top-actions">
+        <span class="account" id="accountEmail">กำลังตรวจสอบบัญชี...</span>
+        <button class="text-button" id="logoutBtn" type="button">ออกจากระบบ</button>
+      </div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow mono">CLUB ADMINISTRATION</p>
+        <h1>ผู้สมัครชมรม</h1>
+        <p class="intro-copy">ตรวจสอบข้อมูลและจัดการใบสมัครของชมรมที่คุณดูแล</p>
+      </div>
+      <div class="intro-actions"><button class="primary-button" id="newClubBtn" type="button">+ เพิ่มชมรม</button><a class="back-link" href="../dashboard/dashboard.html">กลับ Dashboard</a></div>
+    </section>
+
+    <section class="club-strip" id="clubStrip" hidden></section>
+
+    <section class="managed-clubs" id="managedClubs" hidden>
+      <div class="section-heading"><h2>ชมรมที่ดูแล</h2><span class="muted">แก้ไขข้อมูลที่ผู้สมัครจะเห็น</span></div>
+      <div class="managed-grid" id="managedClubList"></div>
+    </section>
+
+    <section class="stats" aria-label="สรุปใบสมัคร">
+      <div class="stat"><span class="stat-label">ทั้งหมด</span><strong id="totalCount">0</strong></div>
+      <div class="stat pending"><span class="stat-label">รอพิจารณา</span><strong id="pendingCount">0</strong></div>
+      <div class="stat approved"><span class="stat-label">อนุมัติแล้ว</span><strong id="approvedCount">0</strong></div>
+      <div class="stat rejected"><span class="stat-label">ไม่ผ่าน</span><strong id="rejectedCount">0</strong></div>
+    </section>
+
+    <section class="workspace">
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="กรองสถานะใบสมัคร">
+          <button class="tab active" type="button" data-status="all">ทั้งหมด</button>
+          <button class="tab" type="button" data-status="pending">รอพิจารณา</button>
+          <button class="tab" type="button" data-status="approved">อนุมัติแล้ว</button>
+          <button class="tab" type="button" data-status="rejected">ไม่ผ่าน</button>
+        </div>
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="ค้นหาชื่อ อีเมล หรือรหัสนักศึกษา" autocomplete="off">
+        </label>
+      </div>
+      <div id="feedback" class="feedback" hidden></div>
+      <div id="applicationList" class="application-list">
+        <div class="loading">กำลังโหลดข้อมูลผู้สมัคร...</div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="detailDialog" class="detail-dialog">
+    <div class="dialog-head"><h2>รายละเอียดผู้สมัคร</h2><button class="close-button" id="closeDialog" type="button" aria-label="ปิด">&times;</button></div>
+    <div id="detailContent"></div>
+  </dialog>
+  <dialog id="clubDialog" class="detail-dialog">
+    <div class="dialog-head"><h2 id="clubDialogTitle">เพิ่มชมรม</h2><button class="close-button" id="closeClubDialog" type="button" aria-label="ปิด">&times;</button></div>
+    <form id="clubForm" class="club-form">
+      <input id="clubId" type="hidden">
+      <label>ชื่อชมรม<input id="clubName" type="text" required maxlength="100"></label>
+      <label>หมวดหมู่<input id="clubCategory" type="text" required maxlength="60" placeholder="เช่น วิชาการ กีฬา ศิลปะ"></label>
+      <label>รายละเอียดชมรม<textarea id="clubDescription" required maxlength="1000" rows="5" placeholder="บอกกิจกรรมและสิ่งที่สมาชิกจะได้รับ"></textarea></label>
+      <div class="form-row"><label>วันปิดรับสมัคร<input id="clubDeadline" type="date"></label><label>อีโมจิ<input id="clubEmoji" type="text" maxlength="4" placeholder="🎓"></label></div>
+      <label>ช่องทางติดต่อ<input id="clubContact" type="text" maxlength="160" placeholder="อีเมล หรือ Line ของชมรม"></label>
+      <p class="form-error" id="clubFormError" hidden></p>
+      <div class="form-actions"><button class="back-link" id="cancelClubBtn" type="button">ยกเลิก</button><button class="primary-button" type="submit">บันทึกข้อมูล</button></div>
+    </form>
+  </dialog>
+  <script type="module" src="club-admin.js"></script>
+</body>
+</html>

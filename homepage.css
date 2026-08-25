@@ -94,6 +94,8 @@
     color:var(--ink-soft);
     min-width:200px;
   }
+  .home-search input{ width:150px; border:0; outline:0; background:transparent; color:var(--ink); font:inherit; }
+  .home-search input::placeholder{ color:var(--ink-soft); }
   .btn{
     display:inline-flex; align-items:center; gap:8px;
     padding:11px 22px;
@@ -109,7 +111,7 @@
   .btn-ghost{ color:var(--ink-soft); font-weight:600; font-size:14.5px; }
 
   @media (max-width:860px){
-    nav.main-nav, .search-pill{ display:none; }
+    nav.main-nav, .home-search{ display:none; }
   }
 
   /* ===== HERO — corkboard ===== */
@@ -317,6 +319,8 @@
   .stamp:nth-child(even){ transform:rotate(3deg); border-color:var(--crimson); color:var(--crimson);}
   .stamp:nth-child(3n){ transform:rotate(-2deg); border-color:var(--green); color:var(--green);}
   .stamp .ico{ font-size:24px; margin-bottom:4px; }
+  .stamp.selected{ background:var(--crimson); color:var(--paper); border-color:var(--crimson); transform:rotate(0deg) scale(1.04); }
+  .empty-home{ width:100%; padding:32px 20px; color:var(--ink-soft); text-align:center; font-size:14px; }
   @media (prefers-reduced-motion:no-preference){
     .stamp{ transition:transform .2s ease; }
     .stamp:hover{ transform:rotate(0deg) scale(1.06); }
@@ -412,6 +416,11 @@
   .status-pill.soon{ background:rgba(192,145,46,0.18); color:#8a651f; }
   .status-pill.closed{ background:rgba(85,80,63,0.12); color:var(--ink-soft); }
   .club-link{ font-size:13px; font-weight:700; color:var(--crimson); }
+  .club-foot .club-link{ border:0; background:transparent; cursor:pointer; }
+  .home-club-dialog{ width:min(500px,calc(100% - 32px)); padding:0; border:0; border-radius:6px; color:var(--ink); box-shadow:0 20px 60px rgba(34,29,22,.3); }
+  .home-club-dialog::backdrop{ background:rgba(34,29,22,.48); }
+  .home-club-close{ position:absolute; top:12px; right:14px; z-index:1; width:32px; height:32px; border:0; border-radius:50%; color:var(--ink-soft); background:var(--paper); font-size:24px; line-height:1; }
+  .home-club-banner{ height:130px; display:grid; place-items:center; background:linear-gradient(135deg,var(--crimson),var(--cork-dark)); }.home-club-banner span{ display:grid; place-items:center; width:68px; height:68px; border:4px solid var(--paper); border-radius:50%; background:var(--paper); font-size:32px; }.home-club-body{ padding:24px; }.home-club-body h2{ margin:5px 0 10px; font-size:24px; }.home-club-body p{ color:var(--ink-soft); line-height:1.7; font-size:14px; white-space:pre-line; }.home-club-meta{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:18px 0; }.home-club-meta div{ padding:10px; background:var(--cream); }.home-club-meta b,.home-club-meta span{ display:block; }.home-club-meta b{ color:var(--ink-soft); font-size:11px; margin-bottom:3px; }.home-club-meta span{ font-size:13px; }
 
   /* ===== HOW IT WORKS ===== */
   .steps{

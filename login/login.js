@@ -8,7 +8,11 @@ import {
 import {
   getFirestore,
   doc,
-  getDoc
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -116,7 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('clubtu_remember_email', email);
         }
 
-        window.location.href = '/dashboard/dashboard.html';
+        const managedClubs = await getDocs(query(
+          collection(db, 'clubs'),
+          where('adminUid', '==', uid)
+        ));
+        const adminProfile = await getDoc(doc(db, 'clubAdmins', uid));
+        window.location.href = managedClubs.empty && !adminProfile.exists()
+          ? '/dashboard/dashboard.html'
+          : '/club-admin/club-admin.html';
 
       } catch (error) {
         formError.textContent = firebaseErrorMessage(error);
