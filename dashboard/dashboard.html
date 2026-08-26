@@ -251,6 +251,7 @@
           <div><div class="nav-label" style="padding:0; margin:0 0 4px;">ชั้นปี</div><div style="font-size:14px;" id="profileYear">-</div></div>
           <div><div class="nav-label" style="padding:0; margin:0 0 4px;">สมัครสมาชิกเมื่อ</div><div style="font-size:14px;" id="profileCreatedAt">-</div></div>
         </div>
+        <button class="welcome-cta" id="editProfileBtn" type="button" style="background:var(--crimson); color:var(--paper); margin-top:24px;">แก้ไขโปรไฟล์</button>
       </div>
     </div>
 
@@ -282,6 +283,18 @@
 <dialog id="clubDetailDialog" class="club-detail-dialog">
   <button class="club-detail-close" type="button" onclick="this.closest('dialog').close()" aria-label="ปิด">&times;</button>
   <div id="clubDetailContent"></div>
+</dialog>
+<dialog id="profileDialog" class="profile-dialog">
+  <div class="profile-dialog-head"><h2>แก้ไขโปรไฟล์</h2><button id="closeProfileDialog" type="button" aria-label="ปิด">&times;</button></div>
+  <form id="profileForm" class="profile-form">
+    <div class="profile-preview" id="profilePreview">?</div>
+    <label>ชื่อที่แสดง<input id="profileDisplayName" type="text" maxlength="80" placeholder="ชื่อของคุณ"></label>
+    <label>ลิงก์รูปโปรไฟล์<input id="profilePhotoUrl" type="url" placeholder="https://..."></label>
+    <div class="profile-form-grid"><label>คณะ<select id="profileFaculty"><option value="">ยังไม่ระบุ</option><option>นิติศาสตร์</option><option>พาณิชยศาสตร์และการบัญชี</option><option>รัฐศาสตร์</option><option>เศรษฐศาสตร์</option><option>สังคมสงเคราะห์ศาสตร์</option><option>ศิลปศาสตร์</option><option>วารสารศาสตร์และสื่อสารมวลชน</option><option>วิทยาศาสตร์และเทคโนโลยี</option><option>วิศวกรรมศาสตร์</option><option>แพทยศาสตร์</option><option>สหเวชศาสตร์</option><option>สถาปัตยกรรมศาสตร์และการผังเมือง</option></select></label><label>ชั้นปี<input id="profileYear" type="text" maxlength="20" placeholder="เช่น 2"></label></div>
+    <p class="profile-form-message" id="profileFormMessage" hidden></p>
+    <button class="profile-submit" type="submit">บันทึกข้อมูล</button>
+  </form>
+  <div class="password-section"><h3>เปลี่ยนรหัสผ่าน</h3><form id="passwordForm" class="profile-form"><label>รหัสผ่านปัจจุบัน<input id="currentPassword" type="password" required autocomplete="current-password"></label><label>รหัสผ่านใหม่<input id="newPassword" type="password" minlength="8" required autocomplete="new-password"></label><label>ยืนยันรหัสผ่านใหม่<input id="confirmPassword" type="password" minlength="8" required autocomplete="new-password"></label><p class="profile-form-message" id="passwordFormMessage" hidden></p><button class="password-submit" type="submit">เปลี่ยนรหัสผ่าน</button></form></div>
 </dialog>
 
 <script type="module" src="dashboard.js"></script>

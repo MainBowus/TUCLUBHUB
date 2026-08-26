@@ -232,12 +232,19 @@
   <h2>ยังไม่รู้จะเข้าชมรมไหนดี?</h2>
   <p>ทำแบบทดสอบความสนใจ 2 นาที แล้วเราจะแนะนำชมรมที่เหมาะกับคุณที่สุด</p>
   <div class="btns">
-    <a href="login/login.html" class="btn btn-on-crimson">ทำแบบทดสอบความสนใจ</a>
+    <button class="btn btn-on-crimson" id="interestQuizBtn" type="button">ทำแบบทดสอบความสนใจ</button>
     <a href="#featured" class="btn btn-outline-light">เรียกดูชมรมทั้งหมด</a>
   </div>
 </div>
 
 <footer>
+
+<dialog class="quiz-dialog" id="quizDialog">
+  <div class="quiz-head"><div><span class="eyebrow-stamp">INTEREST CHECK</span><h2>ค้นหาชมรมที่ใช่</h2></div><button id="closeQuiz" type="button" aria-label="ปิดแบบทดสอบ">&times;</button></div>
+  <div class="quiz-progress"><span id="quizProgressLabel">ข้อ 1 จาก 10</span><div><i id="quizProgressBar"></i></div></div>
+  <form id="quizForm"><div id="quizQuestion"></div><div class="quiz-actions"><button class="btn btn-outline" id="quizBack" type="button">ย้อนกลับ</button><button class="btn btn-primary" id="quizNext" type="button">ถัดไป</button></div></form>
+  <div id="quizResult" hidden></div>
+</dialog>
   <svg class="dome" viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M20 140 L20 70 Q20 20 100 20 Q180 20 180 70 L180 140" stroke="#F4EBD6" stroke-width="3"/>
     <line x1="20" y1="140" x2="180" y2="140" stroke="#F4EBD6" stroke-width="3"/>

@@ -15,6 +15,20 @@ const db = getFirestore(initializeApp(firebaseConfig));
 let clubs = [];
 let activeStudentCount = 0;
 let activeCategory = '';
+let quizIndex = 0;
+let quizAnswers = [];
+const quizQuestions = [
+  { text: 'เวลาว่าง คุณอยากทำอะไรที่สุด?', options: [{ label: 'ออกกำลังกายและแข่งขัน', category: 'กีฬา' }, { label: 'สร้างงานศิลปะหรือการแสดง', category: 'ศิลปะ' }, { label: 'เขียนโค้ดหรือทดลองเทคโนโลยี', category: 'เทคโนโลยี' }, { label: 'ช่วยเหลือผู้คนและสังคม', category: 'อาสาพัฒนา' }] },
+  { text: 'กิจกรรมแบบไหนทำให้คุณมีพลัง?', options: [{ label: 'ซ้อมและขึ้นเวที', category: 'ศิลปะการแสดง' }, { label: 'แก้โจทย์และเรียนรู้สิ่งใหม่', category: 'วิชาการ' }, { label: 'เล่นดนตรีหรือฟังเพลง', category: 'ดนตรี' }, { label: 'พบเพื่อนจากหลายวัฒนธรรม', category: 'นานาชาติ' }] },
+  { text: 'คุณถนัดหรืออยากพัฒนาทักษะใด?', options: [{ label: 'การสื่อสารและการโน้มน้าว', category: 'โต้วาที' }, { label: 'การถ่ายภาพและเล่าเรื่องด้วยภาพ', category: 'ถ่ายภาพ' }, { label: 'การออกแบบและความคิดสร้างสรรค์', category: 'ศิลปะ' }, { label: 'การวางแผนและทำงานเป็นทีม', category: 'อาสาพัฒนา' }] },
+  { text: 'ถ้าได้ทำโปรเจกต์หนึ่งชิ้น คุณจะเลือกอะไร?', options: [{ label: 'ทำแอปหรือเว็บไซต์', category: 'เทคโนโลยี' }, { label: 'จัดค่ายให้ชุมชน', category: 'อาสาพัฒนา' }, { label: 'ทำวิจัยหรือบทความ', category: 'วิชาการ' }, { label: 'จัดนิทรรศการหรือการแสดง', category: 'ศิลปะการแสดง' }] },
+  { text: 'คุณชอบบรรยากาศของชมรมแบบไหน?', options: [{ label: 'คึกคักและท้าทาย', category: 'กีฬา' }, { label: 'สงบและได้โฟกัส', category: 'วิชาการ' }, { label: 'สนุก มีเสียงเพลง และเป็นกันเอง', category: 'ดนตรี' }, { label: 'เปิดกว้าง ได้รู้จักคนใหม่', category: 'นานาชาติ' }] },
+  { text: 'หัวข้อไหนที่คุณอยากคุยได้นาน ๆ?', options: [{ label: 'ประเด็นสังคมและสิทธิ', category: 'โต้วาที' }, { label: 'นวัตกรรมและอนาคต', category: 'เทคโนโลยี' }, { label: 'ภาพยนตร์ แฟชั่น และงานสร้างสรรค์', category: 'ศิลปะ' }, { label: 'ธรรมชาติและชุมชน', category: 'อาสาพัฒนา' }] },
+  { text: 'คุณอยากมีผลงานแบบไหนใน portfolio?', options: [{ label: 'เหรียญรางวัลหรือการแข่งขัน', category: 'กีฬา' }, { label: 'ผลงานภาพถ่าย', category: 'ถ่ายภาพ' }, { label: 'โปรเจกต์เทคโนโลยี', category: 'เทคโนโลยี' }, { label: 'การแสดงบนเวที', category: 'ศิลปะการแสดง' }] },
+  { text: 'คุณอยากใช้เวลาหลังเลิกเรียนอย่างไร?', options: [{ label: 'ฝึกเครื่องดนตรี', category: 'ดนตรี' }, { label: 'อ่านและแลกเปลี่ยนความรู้', category: 'วิชาการ' }, { label: 'ฝึกพูดและนำเสนอ', category: 'โต้วาที' }, { label: 'ทำกิจกรรมเพื่อส่วนรวม', category: 'อาสาพัฒนา' }] },
+  { text: 'ถ้าต้องชวนเพื่อนเข้าชมรม คุณจะใช้วิธีไหน?', options: [{ label: 'ทำโปสเตอร์สวย ๆ', category: 'ศิลปะ' }, { label: 'ทำคลิปหรือภาพเล่าเรื่อง', category: 'ถ่ายภาพ' }, { label: 'ชวนคุยด้วยเหตุผลและข้อมูล', category: 'โต้วาที' }, { label: 'ชวนไปลองกิจกรรมด้วยกัน', category: 'กีฬา' }] },
+  { text: 'เป้าหมายจากการเข้าชมรมของคุณคืออะไร?', options: [{ label: 'ได้เพื่อนและประสบการณ์ใหม่', category: 'นานาชาติ' }, { label: 'พัฒนาทักษะเพื่ออาชีพ', category: 'เทคโนโลยี' }, { label: 'สร้างประโยชน์ให้สังคม', category: 'อาสาพัฒนา' }, { label: 'มีพื้นที่แสดงตัวตน', category: 'ศิลปะการแสดง' }] }
+];
 const $ = id => document.getElementById(id);
 const escapeHtml = value => { const node = document.createElement('div'); node.textContent = value == null ? '' : String(value); return node.innerHTML; };
 const asDate = value => value && value.toDate ? value.toDate() : new Date(value);
@@ -60,6 +74,25 @@ function renderClubs(keyword = '') {
   $('featuredClubList').innerHTML = filtered.length ? filtered.slice(0, 6).map(clubCard).join('') : '<div class="empty-home">ไม่พบชมรมที่ตรงกับคำค้นหา</div>';
 }
 
+function renderQuizQuestion() {
+  const question = quizQuestions[quizIndex];
+  $('quizProgressLabel').textContent = `ข้อ ${quizIndex + 1} จาก ${quizQuestions.length}`;
+  $('quizProgressBar').style.width = `${((quizIndex + 1) / quizQuestions.length) * 100}%`;
+  $('quizQuestion').innerHTML = `<h3>${escapeHtml(question.text)}</h3><div class="quiz-options">${question.options.map((option, index) => `<label class="quiz-option"><input type="radio" name="quizAnswer" value="${escapeHtml(option.category)}" ${quizAnswers[quizIndex] === option.category ? 'checked' : ''}><span>${escapeHtml(option.label)}</span></label>`).join('')}</div>`;
+  $('quizBack').disabled = quizIndex === 0;
+  $('quizNext').textContent = quizIndex === quizQuestions.length - 1 ? 'ดูผลลัพธ์' : 'ถัดไป';
+}
+
+function showQuizResult() {
+  const scores = {};
+  quizAnswers.forEach(category => { scores[category] = (scores[category] || 0) + 1; });
+  const topCategory = Object.entries(scores).sort((a, b) => b[1] - a[1])[0]?.[0] || 'ทั่วไป';
+  const matches = clubs.filter(club => String(club.category || '').toLowerCase().includes(topCategory.toLowerCase()) || topCategory.toLowerCase().includes(String(club.category || '').toLowerCase())).slice(0, 3);
+  $('quizForm').hidden = true;
+  $('quizResult').hidden = false;
+  $('quizResult').innerHTML = `<div class="quiz-result"><span class="result-kicker">ผลลัพธ์ของคุณ</span><h3>คุณเหมาะกับชมรมสาย${escapeHtml(topCategory)}</h3><p>จากคำตอบของคุณ เราคิดว่ากิจกรรมด้านนี้น่าจะทำให้คุณสนุกและได้ใช้จุดแข็งของตัวเอง</p><div class="quiz-matches">${matches.length ? matches.map(club => `<button type="button" class="quiz-match" data-quiz-club="${escapeHtml(club.id)}"><span>${escapeHtml(club.emoji || '🏷️')}</span>${escapeHtml(club.name || 'ชมรม')}</button>`).join('') : '<span class="quiz-no-match">ยังไม่มีชมรมในหมวดนี้ ลองดูชมรมทั้งหมดด้านล่าง</span>'}</div><div class="quiz-result-actions"><button class="btn btn-primary" id="quizBrowse" type="button">ดูชมรมที่แนะนำ</button><button class="btn btn-outline" id="quizRestart" type="button">ทำอีกครั้ง</button></div></div>`;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const menuToggle = $('menuToggle');
   const mobileNav = $('mobileNav');
@@ -69,6 +102,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   $('categoryList').addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; activeCategory = activeCategory === button.dataset.category ? '' : button.dataset.category; renderCategories(); renderClubs($('homeSearch').value); });
   $('homeSearch').addEventListener('input', event => renderClubs(event.target.value));
+  $('interestQuizBtn').addEventListener('click', () => { quizIndex = 0; quizAnswers = []; $('quizForm').hidden = false; $('quizResult').hidden = true; renderQuizQuestion(); $('quizDialog').showModal(); });
+  $('closeQuiz').addEventListener('click', () => $('quizDialog').close());
+  $('quizNext').addEventListener('click', () => { const answer = document.querySelector('input[name="quizAnswer"]:checked'); if (!answer) { $('quizQuestion').classList.add('quiz-shake'); setTimeout(() => $('quizQuestion').classList.remove('quiz-shake'), 350); return; } quizAnswers[quizIndex] = answer.value; if (quizIndex === quizQuestions.length - 1) showQuizResult(); else { quizIndex += 1; renderQuizQuestion(); } });
+  $('quizBack').addEventListener('click', () => { if (quizIndex > 0) { quizIndex -= 1; renderQuizQuestion(); } });
+  $('quizResult').addEventListener('click', event => { const match = event.target.closest('[data-quiz-club]'); if (match) { $('quizDialog').close(); showClubDetails(clubs.find(club => club.id === match.dataset.quizClub)); } const browse = event.target.closest('#quizBrowse'); if (browse) { $('quizDialog').close(); document.getElementById('featured').scrollIntoView({ behavior: 'smooth' }); } if (event.target.closest('#quizRestart')) { quizIndex = 0; quizAnswers = []; $('quizForm').hidden = false; $('quizResult').hidden = true; renderQuizQuestion(); } });
   $('featuredClubList').addEventListener('click', event => {
     const button = event.target.closest('.home-view-club');
     if (button) showClubDetails(clubs.find(club => club.id === button.dataset.clubId));

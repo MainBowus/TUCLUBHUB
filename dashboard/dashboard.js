@@ -2,7 +2,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
   import {
     getAuth,
     onAuthStateChanged,
-    signOut
+    signOut,
+    updateProfile,
+    updatePassword,
+    reauthenticateWithCredential,
+    EmailAuthProvider
   } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
   import {
     getFirestore,
@@ -47,6 +51,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
   };
 
   const bannerVariants = ['', 'alt2', 'alt3'];
+  let currentUser = null;
+  let currentProfile = null;
 
   // ===== App state (populated after auth + Firestore fetch) =====
   let currentUid = null;
@@ -61,6 +67,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
   function initials(email) {
     if (!email) return '?';
     return email.slice(0, 2).toUpperCase();
+  }
+  function setAvatar(id, label, photoURL) {
+    const element = document.getElementById(id);
+    if (!element) return;
+    element.textContent = initials(label);
+    element.style.backgroundImage = photoURL ? `url("${photoURL}")` : '';
+    element.classList.toggle('has-photo', Boolean(photoURL));
   }
 
   function formatThaiDate(isoString) {
@@ -478,6 +491,33 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
     if (el) el.textContent = value;
   }
 
+  function renderProfilePreview() {
+    const preview = document.getElementById('profilePreview');
+    if (!preview) return;
+    const name = currentUser?.displayName || currentProfile?.displayName || currentUser?.email || '?';
+    preview.textContent = name.slice(0, 2).toUpperCase();
+    preview.style.backgroundImage = currentUser?.photoURL || currentProfile?.photoURL ? `url("${currentUser?.photoURL || currentProfile?.photoURL}")` : '';
+    preview.classList.toggle('has-image', Boolean(currentUser?.photoURL || currentProfile?.photoURL));
+  }
+
+  function openProfileDialog() {
+    document.getElementById('profileDisplayName').value = currentUser?.displayName || currentProfile?.displayName || '';
+    document.getElementById('profilePhotoUrl').value = currentUser?.photoURL || currentProfile?.photoURL || '';
+    document.getElementById('profileFaculty').value = currentProfile?.faculty || '';
+    document.getElementById('profileYear').value = currentProfile?.year || '';
+    document.getElementById('profileFormMessage').hidden = true;
+    document.getElementById('passwordFormMessage').hidden = true;
+    renderProfilePreview();
+    document.getElementById('profileDialog').showModal();
+  }
+
+  function showProfileMessage(id, message, isError = false) {
+    const element = document.getElementById(id);
+    element.textContent = message;
+    element.classList.toggle('error', isError);
+    element.hidden = false;
+  }
+
   function renderNotifications() {
     const list = document.getElementById('notificationList');
     if (!list) return;
@@ -679,6 +719,48 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
       if (notificationPanel) notificationPanel.hidden = !notificationPanel.hidden;
     });
   }
+
+  document.getElementById('editProfileBtn')?.addEventListener('click', openProfileDialog);
+  document.getElementById('closeProfileDialog')?.addEventListener('click', () => document.getElementById('profileDialog').close());
+  document.getElementById('profilePhotoUrl')?.addEventListener('input', renderProfilePreview);
+  document.getElementById('profileForm')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const button = event.target.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+      const displayName = document.getElementById('profileDisplayName').value.trim();
+      const photoURL = document.getElementById('profilePhotoUrl').value.trim();
+      const faculty = document.getElementById('profileFaculty').value;
+      const year = document.getElementById('profileYear').value.trim();
+      await updateProfile(currentUser, { displayName, photoURL });
+      await setDoc(doc(db, 'students', currentUid), { displayName, photoURL, faculty, year, updatedAt: serverTimestamp() }, { merge: true });
+      currentProfile = { ...currentProfile, displayName, photoURL, faculty, year };
+      setText('profileName', displayName || currentUser.email);
+      setText('profileFaculty', faculty || '-');
+      setText('profileYear', year || '-');
+      setText('sidebarName', displayName || currentUser.email);
+      setText('topbarAvatar', initials(displayName || currentUser.email));
+      setText('sidebarAvatar', initials(displayName || currentUser.email));
+      showProfileMessage('profileFormMessage', 'บันทึกโปรไฟล์แล้ว');
+      renderProfilePreview();
+    } catch (error) { console.error(error); showProfileMessage('profileFormMessage', 'บันทึกโปรไฟล์ไม่สำเร็จ', true); }
+    finally { button.disabled = false; }
+  });
+  document.getElementById('passwordForm')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const button = event.target.querySelector('button[type="submit"]');
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    if (newPassword !== document.getElementById('confirmPassword').value) { showProfileMessage('passwordFormMessage', 'รหัสผ่านใหม่ไม่ตรงกัน', true); return; }
+    button.disabled = true;
+    try {
+      await reauthenticateWithCredential(currentUser, EmailAuthProvider.credential(currentUser.email, currentPassword));
+      await updatePassword(currentUser, newPassword);
+      event.target.reset();
+      showProfileMessage('passwordFormMessage', 'เปลี่ยนรหัสผ่านแล้ว');
+    } catch (error) { console.error(error); showProfileMessage('passwordFormMessage', error.code === 'auth/wrong-password' ? 'รหัสผ่านปัจจุบันไม่ถูกต้อง' : 'เปลี่ยนรหัสผ่านไม่สำเร็จ', true); }
+    finally { button.disabled = false; }
+  });
   const closeNotifications = document.getElementById('closeNotifications');
   if (closeNotifications) closeNotifications.addEventListener('click', () => { notificationPanel.hidden = true; });
   document.addEventListener('click', (event) => {
@@ -738,6 +820,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
       return;
     }
     currentUid = user.uid;
+    currentUser = user;
 
     const clubAdminNav = document.getElementById('clubAdminNav');
     if (clubAdminNav) clubAdminNav.hidden = true;
@@ -746,6 +829,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
     try {
       const snapshot = await getDoc(doc(db, 'students', user.uid));
       profile = snapshot.exists() ? snapshot.data() : null;
+      currentProfile = profile || {};
       if (profile && profile.preferences) {
         currentPrefs = { ...defaultPrefs, ...profile.preferences };
       }
@@ -764,12 +848,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
     greetingName = 'สวัสดี';
 
     // sidebar
-    setText('sidebarAvatar', shortAvatar);
+    setAvatar('sidebarAvatar', profile?.displayName || email, user.photoURL || profile?.photoURL);
     setText('sidebarName', email);
     setText('sidebarRole', `${facultyLabel} · ${yearLabel}`);
 
     // topbar
-    setText('topbarAvatar', shortAvatar);
+    setAvatar('topbarAvatar', profile?.displayName || email, user.photoURL || profile?.photoURL);
     setText('page-title', greetingName);
     const todayDateEl = document.getElementById('todayDate');
     if (todayDateEl) {
@@ -779,8 +863,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
     }
 
     // profile page
-    setText('profileAvatar', shortAvatar);
-    setText('profileName', email);
+    setAvatar('profileAvatar', profile?.displayName || email, user.photoURL || profile?.photoURL);
+    setText('profileName', profile?.displayName || email);
     setText('profileStudentId', 'รหัสนักศึกษา ' + (profile && profile.studentId ? profile.studentId : '-'));
     setText('profileEmail', email);
     setText('profileFaculty', profile && profile.faculty ? profile.faculty : '-');

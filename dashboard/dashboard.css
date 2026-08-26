@@ -126,7 +126,14 @@
     display:flex; align-items:center; justify-content:center;
     font-weight:800; font-size:13px;
     flex-shrink:0;
+    background-position:center; background-size:cover; background-repeat:no-repeat;
   }
+  .avatar.has-photo{ color:transparent; }
+    .profile-dialog{ width:min(560px,calc(100% - 32px)); max-height:calc(100vh - 32px); overflow:auto; padding:0; border:0; border-radius:var(--r-lg); background:var(--paper); color:var(--ink); box-shadow:0 20px 60px rgba(34,29,22,.28); }
+    .profile-dialog::backdrop{ background:rgba(34,29,22,.42); }
+    .profile-dialog-head{ display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--line); }.profile-dialog-head h2{ font-size:20px; }.profile-dialog-head button{ width:32px; height:32px; border:0; border-radius:50%; color:var(--ink-soft); background:var(--cream-soft); font-size:23px; cursor:pointer; }
+    .profile-form{ display:grid; gap:13px; padding:22px; }.profile-form label{ display:grid; gap:5px; color:var(--ink-soft); font-size:12px; font-weight:700; }.profile-form input,.profile-form select{ width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:8px; outline:0; color:var(--ink); background:var(--cream-soft); font:inherit; font-size:13px; }.profile-form input:focus,.profile-form select:focus{ border-color:var(--crimson); box-shadow:0 0 0 3px var(--crimson-soft); }.profile-form-grid{ display:grid; grid-template-columns:1fr 110px; gap:12px; }.profile-preview{ width:72px; height:72px; display:grid; place-items:center; margin:0 auto 3px; border-radius:50%; color:var(--ink); background:linear-gradient(150deg,var(--gold-light),var(--gold)); background-position:center; background-size:cover; font-weight:800; font-size:20px; }.profile-preview.has-image{ color:transparent; }.profile-form-message{ margin:0; padding:9px 11px; border-radius:7px; color:var(--green); background:var(--green-soft); font-size:12px; }.profile-form-message.error{ color:var(--crimson); background:var(--crimson-soft); }.profile-submit,.password-submit{ padding:10px 14px; border:0; border-radius:8px; color:var(--paper); background:var(--crimson); font-weight:700; cursor:pointer; }.profile-submit:disabled,.password-submit:disabled{ cursor:wait; opacity:.55; }.password-section{ padding:20px 22px 22px; border-top:1px solid var(--line); }.password-section h3{ margin:0 0 2px; font-size:16px; }
+    @media (max-width:500px){ .profile-dialog{ width:calc(100% - 20px); max-height:calc(100vh - 20px); }.profile-dialog-head,.profile-form,.password-section{ padding-left:16px; padding-right:16px; }.profile-form-grid{ grid-template-columns:1fr; } }
   .sidebar-user .name{ font-size:13.5px; font-weight:700; }
   .sidebar-user .role{ font-size:11px; color:var(--ink-soft); }
 
