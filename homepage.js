@@ -66,12 +66,47 @@ function showClubDetails(club) {
   dialog.showModal();
 }
 
+function renderSearchResults(keyword = '') {
+  const term = keyword.trim().toLowerCase();
+  const searchPanel = $('homeSearchResults');
+  if (!searchPanel) return;
+
+  if (!term) {
+    searchPanel.hidden = true;
+    searchPanel.innerHTML = '';
+    return;
+  }
+
+  const availableClubs = clubs.filter(club => !activeCategory || club.category === activeCategory);
+  const matches = availableClubs.filter(club => [club.name, club.category, club.description].some(value => String(value || '').toLowerCase().includes(term))).slice(0, 5);
+
+  searchPanel.hidden = false;
+  searchPanel.innerHTML = matches.length
+    ? `<div class="search-results-header">ผลการค้นหา</div>${matches.map(club => `
+      <button class="search-result-item" type="button" data-search-club="${escapeHtml(club.id)}">
+        <span class="search-item-emoji">${escapeHtml(club.emoji || '🏷️')}</span>
+        <span class="search-item-copy">
+          <strong>${escapeHtml(club.name || 'ไม่มีชื่อชมรม')}</strong>
+          <small>${escapeHtml(club.category || 'ทั่วไป')}</small>
+        </span>
+      </button>
+    `).join('')}`
+    : '<div class="search-no-result">ไม่พบชมรมที่ตรงกับคำค้นหา</div>';
+}
+
 function renderClubs(keyword = '') {
   const term = keyword.trim().toLowerCase();
-  const filtered = clubs.filter(club => (!activeCategory || club.category === activeCategory) && (!term || [club.name, club.category, club.description].some(value => String(value || '').toLowerCase().includes(term))));
+  const categoryFiltered = clubs.filter(club => (!activeCategory || club.category === activeCategory));
+  const filtered = categoryFiltered.filter(club => (!term || [club.name, club.category, club.description].some(value => String(value || '').toLowerCase().includes(term))));
+  const ordered = term ? [...filtered, ...categoryFiltered.filter(club => !filtered.some(item => item.id === club.id))] : categoryFiltered;
   const deadlineClubs = filtered.filter(club => daysUntil(club.deadline) !== null && daysUntil(club.deadline) >= 0).sort((a, b) => daysUntil(a.deadline) - daysUntil(b.deadline)).slice(0, 4);
+
   $('deadlineList').innerHTML = deadlineClubs.length ? deadlineClubs.map(club => { const deadline = asDate(club.deadline); const days = daysUntil(club.deadline); return `<div class="deadline-card"><div class="date mono">${escapeHtml(String(deadline.getDate()).padStart(2, '0'))}</div><div class="month mono">${escapeHtml(formatDate(club.deadline))}</div><h3>ปิดรับสมัคร</h3><div class="club">${escapeHtml(club.name || '-')}</div><span class="urgency ${days <= 7 ? 'high' : 'mid'}">${days === 0 ? 'วันนี้' : `เหลือ ${days} วัน`}</span></div>`; }).join('') : '<div class="empty-home">ยังไม่มีกำหนดการรับสมัคร</div>';
-  $('featuredClubList').innerHTML = filtered.length ? filtered.slice(0, 6).map(clubCard).join('') : '<div class="empty-home">ไม่พบชมรมที่ตรงกับคำค้นหา</div>';
+
+  const matchIds = new Set(filtered.map(club => club.id));
+  $('featuredClubList').innerHTML = ordered.length
+    ? ordered.slice(0, 6).map(club => `<div class="club-card ${term && matchIds.has(club.id) ? 'is-match' : ''}">${clubCard(club).replace('<div class="club-card">', '<div class="club-card">')}</div>`).join('')
+    : '<div class="empty-home">ไม่พบชมรมที่ตรงกับคำค้นหา</div>';
 }
 
 function renderQuizQuestion() {
@@ -100,8 +135,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     menuToggle.addEventListener('click', () => { const isOpen = mobileNav.classList.toggle('open'); menuToggle.setAttribute('aria-expanded', String(isOpen)); });
     mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { mobileNav.classList.remove('open'); menuToggle.setAttribute('aria-expanded', 'false'); }));
   }
-  $('categoryList').addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; activeCategory = activeCategory === button.dataset.category ? '' : button.dataset.category; renderCategories(); renderClubs($('homeSearch').value); });
-  $('homeSearch').addEventListener('input', event => renderClubs(event.target.value));
+  $('categoryList').addEventListener('click', event => { const button = event.target.closest('[data-category]'); if (!button) return; activeCategory = activeCategory === button.dataset.category ? '' : button.dataset.category; renderCategories(); renderClubs($('homeSearch').value); renderSearchResults($('homeSearch').value); });
+  $('homeSearch').addEventListener('input', event => { renderClubs(event.target.value); renderSearchResults(event.target.value); });
+  $('homeSearchResults').addEventListener('click', event => {
+    const button = event.target.closest('[data-search-club]');
+    if (!button) return;
+    const club = clubs.find(item => item.id === button.dataset.searchClub);
+    if (club) showClubDetails(club);
+  });
   $('interestQuizBtn').addEventListener('click', () => { quizIndex = 0; quizAnswers = []; $('quizForm').hidden = false; $('quizResult').hidden = true; renderQuizQuestion(); $('quizDialog').showModal(); });
   $('closeQuiz').addEventListener('click', () => $('quizDialog').close());
   $('quizNext').addEventListener('click', () => { const answer = document.querySelector('input[name="quizAnswer"]:checked'); if (!answer) { $('quizQuestion').classList.add('quiz-shake'); setTimeout(() => $('quizQuestion').classList.remove('quiz-shake'), 350); return; } quizAnswers[quizIndex] = answer.value; if (quizIndex === quizQuestions.length - 1) showQuizResult(); else { quizIndex += 1; renderQuizQuestion(); } });
