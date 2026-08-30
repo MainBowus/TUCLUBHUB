@@ -27,6 +27,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const STUDENT_ID_PATTERN = /^\d{10}$/;
+
 document.addEventListener('DOMContentLoaded', () => {
 
   const form = document.getElementById('registerForm');
@@ -41,7 +44,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const formError = document.getElementById('formError');
   const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
 
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+  const STUDENT_ID_REGEX = /^\d{10}$/;
   const strengthBars = pwStrength ? pwStrength.querySelectorAll('span') : [];
+
+  if (emailInput) {
+    emailInput.addEventListener('input', () => {
+      emailInput.classList.remove('invalid');
+      if (formError) formError.hidden = true;
+    });
+  }
+
+  if (studentIdInput) {
+    studentIdInput.addEventListener('input', () => {
+      studentIdInput.value = studentIdInput.value.replace(/\D/g, '').slice(0, 10);
+      studentIdInput.classList.remove('invalid');
+      if (formError) formError.hidden = true;
+    });
+  }
 
   // ===== Password strength meter =====
   function getPasswordScore(value) {
@@ -132,6 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
       let message = '';
       if (firstInvalid) {
         message = 'กรุณากรอกข้อมูลให้ครบทุกช่องก่อนสร้างบัญชี';
+      } else if (!EMAIL_REGEX.test(email)) {
+        emailInput.classList.add('invalid');
+        message = 'กรุณากรอกอีเมลที่ใช้งานจริง เช่น name@example.com';
+      } else if (!STUDENT_ID_REGEX.test(studentId)) {
+        studentIdInput.classList.add('invalid');
+        message = 'รหัสนักศึกษาต้องเป็นตัวเลข 10 หลักเท่านั้น ไม่เกินและไม่ขาด';
       } else if (password.length < 8) {
         passwordInput.classList.add('invalid');
         message = 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร';
@@ -143,6 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formError.textContent = message;
         formError.hidden = false;
         if (firstInvalid) firstInvalid.focus();
+        else if (!EMAIL_REGEX.test(email)) emailInput.focus();
+        else if (!STUDENT_ID_REGEX.test(studentId)) studentIdInput.focus();
         return;
       }
 

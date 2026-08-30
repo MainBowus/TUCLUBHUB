@@ -45,7 +45,7 @@
       <form id="registerForm" novalidate>
         <div class="field">
           <label for="email">อีเมลนักศึกษา</label>
-          <input type="email" id="email" placeholder="6xxxxxxxxx@dome.tu.ac.th" required>
+          <input type="email" id="email" placeholder="example@dome.tu.ac.th" pattern="^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$" autocomplete="email" required>
         </div>
 
         <div class="field">
@@ -57,7 +57,7 @@
 
         <div class="field">
           <label for="student_id">รหัสนักศึกษา</label>
-          <input type="text" id="student_id" placeholder="เช่น 6512345678" inputmode="numeric" required>
+          <input type="text" id="student_id" placeholder="เช่น 6512345678" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" required>
         </div>
 
         <div class="grid-2">

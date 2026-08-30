@@ -29,6 +29,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 document.addEventListener('DOMContentLoaded', () => {
 
   const form = document.getElementById('loginForm');
@@ -38,6 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const rememberCheckbox = document.getElementById('remember');
   const formError = document.getElementById('formError');
   const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+  if (emailInput) {
+    emailInput.addEventListener('input', () => {
+      emailInput.classList.remove('invalid');
+      if (formError) formError.hidden = true;
+    });
+  }
 
   // ===== Show / hide password =====
   if (togglePw && passwordInput) {
@@ -97,6 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
         formError.textContent = 'กรุณากรอกอีเมลและรหัสผ่านก่อนเข้าสู่ระบบ';
         formError.hidden = false;
         firstInvalid.focus();
+        return;
+      }
+
+      if (!EMAIL_REGEX.test(email)) {
+        emailInput.classList.add('invalid');
+        formError.textContent = 'กรุณากรอกอีเมลที่ใช้งานจริง เช่น name@dome.tu.ac.th';
+        formError.hidden = false;
+        emailInput.focus();
         return;
       }
 
