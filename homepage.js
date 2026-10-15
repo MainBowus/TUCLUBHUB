@@ -155,17 +155,42 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('closeHomeClubDialog').addEventListener('click', () => $('homeClubDialog').close());
   $('homeClubDialog').addEventListener('click', event => { if (event.target === $('homeClubDialog')) $('homeClubDialog').close(); });
   document.querySelectorAll('[href="#"]').forEach(link => link.addEventListener('click', event => event.preventDefault()));
+try {
+  const clubsSnapshot = await getDocs(collection(db, 'clubs'));
+
+  clubs = clubsSnapshot.docs.map(item => ({
+    id: item.id,
+    ...item.data()
+  }));
+
+  renderCategories();
+  renderClubs();
+
   try {
-    const [clubsSnapshot, applicationsSnapshot] = await Promise.all([
-      getDocs(collection(db, 'clubs')),
-      getDocs(collection(db, 'applications'))
-    ]);
-    clubs = clubsSnapshot.docs.map(item => ({ id: item.id, ...item.data() }));
-    activeStudentCount = new Set(applicationsSnapshot.docs.map(item => item.data().uid).filter(Boolean)).size;
-    renderStats(); renderCategories(); renderClubs();
+    const applicationsSnapshot = await getDocs(
+      collection(db, 'applications')
+    );
+
+    activeStudentCount = new Set(
+      applicationsSnapshot.docs
+        .map(item => item.data().uid)
+        .filter(Boolean)
+    ).size;
+
+    renderStats();
   } catch (error) {
-    console.error('Failed to load homepage clubs', error);
-    $('featuredClubList').innerHTML = '<div class="empty-home">โหลดข้อมูลชมรมไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>';
-    $('deadlineList').innerHTML = '<div class="empty-home">โหลดกำหนดการไม่สำเร็จ</div>';
+    console.warn('Could not load homepage application stats:', error);
+    activeStudentCount = null;
+    renderStats();
   }
+
+} catch (error) {
+  console.error('Failed to load homepage clubs:', error);
+
+  $('featuredClubList').innerHTML =
+    '<div class="empty-home">โหลดข้อมูลชมรมไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>';
+
+  $('deadlineList').innerHTML =
+    '<div class="empty-home">โหลดกำหนดการไม่สำเร็จ</div>';
+}
 });
